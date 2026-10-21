@@ -1,0 +1,41 @@
+# Credenciales y configuración sensible
+.env
+.env.*
+!.env.example
+config.php
+config/database.php
+
+# Dependencias
+/vendor/
+/node_modules/
+
+# Bases de datos locales y respaldos
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+
+# Logs, caché y temporales
+*.log
+*.tmp
+/logs/
+/cache/
+/tmp/
+
+# Archivos subidos por usuarios
+/uploads/
+
+# IDE y editores
+.idea/
+.vscode/
+*.swp
+*.iml
+.metadata/
+.settings/
+nbproject/private/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
