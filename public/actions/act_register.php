@@ -23,44 +23,58 @@ if (
 
     //tengo que continuar por aqui despues de terminar register.php
     ) {
-    header('Location: /workshop03/pages/register.php?error=invalid_input');
+    header('Location: /public/pages/register.php?error=invalid_input');
     exit;
 }
 
+if (strlen($username) >= 50) {
+    header('Location: /public/pages/register.php?error=username_too_long');
+    exit;
+}
+
+
+
 if (strlen($password) < 8) {
-    header('Location: /workshop03/pages/register.php?error=password_too_short');
+    header('Location: /public/pages/register.php?error=password_too_short');
     exit;
 }
 
 if ($password !== $confirmPassword) {
-    header('Location: /workshop03/pages/register.php?error=password_mismatch');
+    header('Location: /public/pages/register.php?error=password_mismatch');
     exit;
 }
 
+
+/*
 try {
     if (findProvince($conn, (int) $provinceId) === false) {
-        header('Location: /workshop03/pages/register.php?error=invalid_province');
+        header('Location: /public/pages/register.php?error=invalid_province');
         exit;
     }
-
+*/
     $statement = $conn->prepare(
-        'INSERT INTO users (username, password_hash, province_id) VALUES (:username, :password_hash, :province_id)'
-    );
+        'INSERT INTO usuarios(id, id_rol, nombre, correo, password_hash, active, intentos) VALUES (NULL, :id_rol, :nombre, :correo, :password_hash, :active, :intentos)'
+
+        );
     $statement->execute([
-        'username' => trim($username),
+        'id_rol' => (int) $rol,
+        'nombre' => trim($username),
+        'correo' => trim($correo),
         'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-        'province_id' => (int) $provinceId,
+        'active' => (int) $active,
+        'intentos' => (int) $intentos
+        
     ]);
 } catch (PDOException $exception) {
     // 23000 = integrity constraint violation (the username unique key)
     if ($exception->getCode() === '23000') {
-        header('Location: /workshop03/pages/register.php?error=username_taken');
+        header('Location: /public/pages/register.php?error=username_taken');
         exit;
     }
 
     error_log('Registration database error: ' . $exception->getMessage());
-    header('Location: /workshop03/pages/register.php?error=server_error');
+    header('Location: /public/pages/register.php?error=server_error');
     exit;
 }
 
-header('Location: /workshop03/index.php?success=registered');
+header('Location: /public/index.php?success=registered');
