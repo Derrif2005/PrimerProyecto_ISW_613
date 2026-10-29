@@ -1,5 +1,5 @@
 <?php
-
+/*
 // Sessions idle for longer than this are considered expired
 const SESSION_TIMEOUT_SECONDS = 30 * 60;
 
@@ -21,10 +21,11 @@ function loginUser(array $user)
 
     $_SESSION['user_id'] = (int) $user['id'];
     $_SESSION['username'] = $user['username'];
-    $_SESSION['province_id'] = $user['province_id'] !== null ? (int) $user['province_id'] : null;
-    $_SESSION['province_name'] = $user['province_name'];
-    $_SESSION['profile_picture'] = $user['profile_picture'];
-    $_SESSION['last_activity'] = time();
+    $_SESSION['correo'] = $user['correo'];
+    $_SESSION['password_hash'] = $user['password_hash'];
+    $_SESSION['active'] = (int) $user['active'];
+    $_sESSION['intentos'] = (int) $user['intentos'];    
+    
 }
 
 function logoutUser()
@@ -78,3 +79,5 @@ function forgetUsername()
         'samesite' => 'Lax',
     ]);
 }
+*/
+?>

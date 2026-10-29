@@ -1,4 +1,6 @@
 <?php 
-<h1 class = "text-center">"Prueba"</h1>
+
 
 ?>
+
+<h1 class = "text-center">"Prueba"</h1>
