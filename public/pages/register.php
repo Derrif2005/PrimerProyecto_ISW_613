@@ -1,10 +1,8 @@
 <?php
-       // require_once __DIR__ . '/../utils/database.php';
-       // require_once __DIR__ . '/../utils/provinces.php';
-       // require_once __DIR__ . '/../utils/messages.php';
+
+session_start();
 
 
-// $provinces = getProvinces($conn);
 ?>
 <?php require_once 'common/header.php'; ?>
 <body>
@@ -19,7 +17,7 @@
          
 
             /*Formulario de registro*/
-            <form action="/public/pages/register.php" method="POST">
+            <form action="/public/actions/act_register.php" method="POST">
               <div class="form-group">
                 <label for="username">Nombre</label>
                 <input type="text" class="form-control" id="username" name="username" maxlength="50" required>
