@@ -1,11 +1,18 @@
 <?php
-
+//Se inicia la sesión 
 session_start();
+
+//Es un codigo de seguridad para el formulario
+if(empty($_SESSION['csrf_token'])){
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 
 ?>
+
 <?php require_once 'common/header.php'; ?>
-<body>
+
+<body> 
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -17,48 +24,34 @@ session_start();
          
 
             /*Formulario de registro*/
-            <form action="/public/actions/act_register.php" method="POST">
+            <form action="/actions/act_register.php" method="POST">
               <div class="form-group">
-                <label for="username">Nombre</label>
-                <input type="text" class="form-control" id="username" name="username" maxlength="50" required>
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50" required>
               </div>
 
               <div class="form-group">
-                <label for="Correo">Correo</label>
-                <input type="email" class="form-control" id="Correo" name="Correo" required>
+                <label for="correo">Correo</label>
+                <input type="email" class="form-control" id="Correo" name="correo" required>
               </div>
 
               <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Contraseña</label>
                 <input type="password" class="form-control" id="password" name="password" minlength="8" required>
               </div>
 
               <div class="form-group">
-                <label for="confirm_password">Confirm password</label>
+                <label for="confirm_password">Confirmar password</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" minlength="8" required>
               </div>
 
-              <div class="form-group">
-                <label for="activo_id">Estado</label>
-                <select class="form-control" id="activo_id" name="activo_id" required>
-                  <option value="" disabled selected>Seleccione un estado</option>
-                  <option value="1">Activo</option>
-                  <option value="2">Inactivo</option>
-                </select>
-              </div>  
-              
-              <div class="form-group">
-                <label for="rol_id">Rol</label>
-                <select class="form-control" id="rol_id" name="rol_id" required>
-                  <option value="" disabled selected>Seleccione un rol</option>
-                  <option value="1">administrador</option>
-                  <option value="2">operador</option>
-                </select>
-              </div>  
+              <p class="text-muted">Rol de cuenta: Operador </p>
+
+              <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
               
               <button type="submit" class="btn btn-primary btn-block">Create account</button>
             </form>
-            <p class="text-center mt-3 mb-0">Ya tienes una cuenta? <a href="/../public/index.php">Log in</a></p>
+            <p class="text-center mt-3 mb-0">Ya tienes una cuenta? <a href="/">Log in</a></p>
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@
                     </div>
                     <div class="card-body">
 
-                        <form action="actions/prueba_post.php" method="POST">
+                        <form action="actions/login.php" method="POST">
                             <div class="form-group">
                                 <label for="correo">correo</label>
                                 <input type="email" class="form-control" id="correo" name="correo" required>

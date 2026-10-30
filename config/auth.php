@@ -1,5 +1,5 @@
 <?php
-/*
+
 // Sessions idle for longer than this are considered expired
 const SESSION_TIMEOUT_SECONDS = 30 * 60;
 
@@ -47,7 +47,7 @@ function requireLogin()
     startSession();
 
     if (!isset($_SESSION['user_id'])) {
-        header('Location: /workshop03/index.php?error=login_required');
+        header('Location: //index.php?error=login_required');
         exit;
     }
 
@@ -79,5 +79,5 @@ function forgetUsername()
         'samesite' => 'Lax',
     ]);
 }
-*/
+
 ?>
