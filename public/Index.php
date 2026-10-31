@@ -24,6 +24,12 @@
                     </div>
                     <div class="card-body">
 
+                    <?php 
+                        if(isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
+                            echo '<p style="color: red;">Correo o contrasea incorrectos</p>';                  
+                        }
+
+                    ?>
                         <form action="actions/login.php" method="POST">
                             <div class="form-group">
                                 <label for="correo">correo</label>

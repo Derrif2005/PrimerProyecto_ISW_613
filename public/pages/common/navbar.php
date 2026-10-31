@@ -7,12 +7,12 @@
 <div class="navbar-nav mr-auto">
 
 <a class="nav-item nav-link"
-           href="/PrimerProyecto_ISW_613/pages/home.php">
+           href="/../pages/home.php">
             Mi Perfil
         </a>
 </div>
 
-<form action="/PrimerProyecto_ISW_613/actions/logout.php" method="POST">
+<form action="/../actions/logout.php" method="POST">
         <button class="btn btn-danger" type="submit">
             Cerrar Sesión
         </button>
