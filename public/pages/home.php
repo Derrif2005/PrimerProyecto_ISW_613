@@ -20,7 +20,7 @@
                 </div>
                 <div class="card-body">
                     <p>Consultar los usuarios</p>
-                      <a href="/pages/view_usuarios.php" class="btn btn-primary btn-block">Abrir</a>
+                      <a href="/actions/act_buscar_usuarios.php" class="btn btn-primary btn-block">Abrir</a>
                 </div>
             </div>
         </div>   

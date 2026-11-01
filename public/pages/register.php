@@ -10,7 +10,7 @@ if(empty($_SESSION['csrf_token'])){
 
 ?>
 
-<?php require_once 'common/header.php'; ?>
+<?php require_once __DIR__ . 'common/header.php'; ?>
 
 <body> 
   <div class="container mt-5">
@@ -57,4 +57,4 @@ if(empty($_SESSION['csrf_token'])){
     </div>
   </div>
   
-<?php require_once 'common/footer.php'; ?>
+<?php require_once __DIR__ . 'common/footer.php'; ?>

@@ -44,7 +44,7 @@ if(
 try{
     //Busca por id 
     $consulta = $conn->prepare('SELECT id FROM roles WHERE nombre =:nombre LIMIT 1');
-    $consulta->execute(['nombre' => 'operador']);
+    $consulta->execute(['nombre' => 'operador']);/*cambiar esto en el futuro*/ 
     $rol = $consulta->fetch(PDO::FETCH_ASSOC);
 
     // Si el rol no existe no se puede registar

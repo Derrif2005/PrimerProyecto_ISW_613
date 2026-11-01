@@ -9,6 +9,14 @@ require_once __DIR__ . '/../../config/auth.php';
 
 requireLogin();
 
+// comprueba si el todavia tiene token 
+if (empty($_SESSION['csrf_token'])) {
+
+    // geenra el token y lo guarda
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+
 //Busca usuarios por medio del correo 
  //Si no exisite tendra un valor falso
   $encontrarUsuario = false;
