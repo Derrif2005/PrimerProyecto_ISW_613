@@ -1,6 +1,7 @@
 <?php   
     require_once __DIR__ . '/pages/common/header.php';
-    //require_once __DIR__ . '/../config/conexion.php';
+    require_once __DIR__ . '/../config/auth.php';
+    $rememberedUsername = $_COOKIE['remembered_username'] ?? '';
 ?>
 
 <body>
@@ -39,8 +40,18 @@
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
+
+                            <?php/*pendiente de revisar*/?>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" <?php echo $rememberedUsername !== '' ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="remember_me">Recuerdame</label>
+                            </div>
+
+
                             <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
                         </form>
+                     
+
                         <p class="text-center mt-3 mb-0"> No tienes una cuenta? 
                             <a href="/pages/register.php"> Registrate </a></p>
                     </div>

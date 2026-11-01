@@ -23,7 +23,7 @@ if(empty($_SESSION['csrf_token'])){
           <div class="card-body">
          
 
-            /*Formulario de registro*/
+           <?php /*Formulario de registro*/ ?>
             <form action="/actions/act_register.php" method="POST">
               <div class="form-group">
                 <label for="nombre">Nombre</label>
@@ -45,11 +45,10 @@ if(empty($_SESSION['csrf_token'])){
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" minlength="8" required>
               </div>
 
-              <p class="text-muted">Rol de cuenta: Operador </p>
-
               <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
               
-              <button type="submit" class="btn btn-primary btn-block">Create account</button>
+              <button type="submit" class="btn btn-primary btn-block">Crear Cuenta</button>
+               
             </form>
             <p class="text-center mt-3 mb-0">Ya tienes una cuenta? <a href="/">Log in</a></p>
           </div>

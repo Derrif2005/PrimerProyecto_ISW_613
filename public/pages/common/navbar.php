@@ -1,7 +1,7 @@
 <nav class = "navbar navbar-expand navbar-dark bg-dark">
 
- <a class="navbar-brand" href="/PrimerProyecto_ISW_613/pages/home.php">
-        Mi Sistema
+ <a class="navbar-brand" href="/../pages/home.php">
+        Inicio
     </a>
     
 <div class="navbar-nav mr-auto">
