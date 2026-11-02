@@ -33,7 +33,7 @@
                 </div>
                 <div class="card-body">
                     <p>Consultar las categorias</p>
-                      <a href="/pages/view_categorias.php" class="btn btn-primary btn-block">Abrir</a>
+                      <a href="/actions/act_buscar_categoria.php" class="btn btn-primary btn-block">Abrir</a>
                 </div>
             </div>
         </div>   
