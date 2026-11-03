@@ -22,8 +22,9 @@
             <p class="lead">Lista de Categorias</p>
             <hr class="my-4">
         </div>
-
+        <?php /*btn para mostrar el formulario de crear*/ ?>
         <a href="/actions/act_buscar_categoria.php?nuevo=1" class="btn btn-primary mb-3">Nueva categoria</a>
+        
         <table class="table">
             <thead>
                 <tr>
@@ -49,6 +50,7 @@
                         ?>
                     </td>
                     <td>
+                        <?php /*este codigo se puede utilizar*/  ?>
                         <a href="/actions/act_buscar_categoria.php?buscar_categoria=<?php echo urlencode($categoria['nombre']); ?>" class="btn btn-warning btn-sm">
                             Editar
                         </a>
@@ -150,7 +152,7 @@
                             <div class="form-group">
                                 <label for="dias_max_prestamo">Dias maximos de prestamo</label>
                                 <input type="number" class="form-control" id="dias_max_prestamo"
-                                    name="dias_max_prestamo" minlength="8" required>
+                                    name="dias_max_prestamo" min="1" step="1" required>
                             </div>
 
                             <input type="hidden" name="csrf_token"

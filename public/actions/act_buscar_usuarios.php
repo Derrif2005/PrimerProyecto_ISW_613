@@ -29,5 +29,7 @@ if (empty($_SESSION['csrf_token'])) {
 
 //Variable para guardar todo los usuarios
 $users = getUsers($conn); 
+//Variable para mostrar el formulario de crear
+$mostrarU = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos del usuario
 require __DIR__ . '/../pages/view_usuarios.php';

@@ -84,4 +84,59 @@ function forgetUsername()
     ]);
 }
 
+
+
+//se agrega la funcion de verificar el rol de usuario ya que durante el desarollo del programa se repite mucho ese codigo
+
+    function validarAdmin(PDO $conn)
+    {
+        startSession();
+        //Validad que el usuario administrador este activo
+        $consulta = $conn->prepare('SELECT id_rol, active FROM usuarios WHERE id =:id LIMIT 1');
+        $consulta -> execute(['id' => $_SESSION['user_id']]);
+        $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
+        // Si el usuario es false entonces cancela proceso o si es diferente a 1 lo cancela y si es no esta activo tambie lo canceala
+        if($usuario === false || (int)$usuario['id_rol'] !== 1 || (int)$usuario['active'] !== 1)
+        {
+         http_response_code(403);
+        exit('No tiene permisos para actualizar usuarios');
+        } 
+    // Revisa que el usuario este logueado 
+    requireLogin();
+        
+    try{
+    //Validad que el usuario administrador este activo
+    $consulta = $conn->prepare('SELECT id_rol, active FROM usuarios WHERE id =:id LIMIT 1');
+    $consulta -> execute(['id' => $_SESSION['user_id']]);
+    $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
+    // Si el usuario es false entonces cancela proceso o si es diferente a 1 lo cancela y si es no esta activo tambie lo canceala
+    if($usuario === false || (int)$usuario['id_rol'] !== 1 || (int)$usuario['active'] !== 1)
+    {
+     http_response_code(403);
+    exit('No tiene permisos para actualizar usuarios');
+    }
+    } catch (PDOException $error) {
+        error_log('Error al comprobar permisos: ' . $error->getMessage());
+        http_response_code(500);
+        exit('No se pudieron comprobar los permisos');
+    }
+    
+
+    }
+    
+//Valida si el rol existe
+function validarRol(PDO $conn, $id_rol) {
+    //Busca por id de rol y comprueba que existe  
+    $consulta = $conn->prepare('SELECT id FROM roles WHERE id=:id_rol LIMIT 1');
+    $consulta->execute(['id_rol' => $id_rol]);    
+    $rol_existente = $consulta->fetch(PDO::FETCH_ASSOC);
+    //Valida que $rol_existente es true porque si da false no existe
+    if($rol_existente === false){
+        header('Location: /actions/act_buscar_usuarios.php?error=1');
+        exit;
+    }
+}
+
+
+
 ?>
