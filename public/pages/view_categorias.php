@@ -23,13 +23,15 @@
             <hr class="my-4">
         </div>
 
+        <a href="/actions/act_buscar_categoria.php?nuevo=1" class="btn btn-primary mb-3">Nueva categoria</a>
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Dias Maximos de prestamo</th>
-                     <th>Estado</th>
+                    <th>Estado</th>
+                    <th>acciones</th>
                 </tr>
             </thead>
 
@@ -46,8 +48,23 @@
                         } 
                         ?>
                     </td>
+                    <td>
+                        <a href="/actions/act_buscar_categoria.php?buscar_categoria=<?php echo urlencode($categoria['nombre']); ?>" class="btn btn-warning btn-sm">
+                            Editar
+                        </a>
+                        <form action="/actions/act_categoria.php" method="POST" class="d-inline" onsumit="return confirm('Desea eliminar la categoria puede producir un desastre en la base de datos')">
+                    
+                            <input type="hidden" name="accion" value="eliminar">
+                            <input type="hidden" name="id" value="<?php echo (int)$categoria['id']; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+                            
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        </td>
+
                 </tr>
                 <?php endforeach; ?>
+
             </tbody>
         </table>
     </div>
@@ -71,6 +88,9 @@
                         <?php if($encontrarCategoria !== false): ?>
                         <form action="/actions/act_categoria.php" method="POST">
 
+                            <?php /*se manera un if y un elseif donde se para una valor igual a actualizar el cual entrara en el if y ejecutara el insert*/?>
+                            <input type="hidden" name="accion" value="actualizar">
+
                             <div class="form-group">
                                 <input type="hidden" class="form-control" id="id" name="id"
                                     value="<?php echo htmlspecialchars($encontrarCategoria['id'], ENT_QUOTES, 'UTF-8') ?>">
@@ -85,11 +105,11 @@
 
                             <div class="form-group">
                                 <input type="number" class="form-control" id="dias_max_prestamo"
-                                    name="dias_max_prestamo"
+                                    name="dias_max_prestamo" min="1" step="1"
                                     value="<?php echo htmlspecialchars($encontrarCategoria['dias_max_prestamo'], ENT_QUOTES, 'UTF-8') ?>">
                             </div>
 
-                              <div class="form-group">
+                            <div class="form-group">
                                 <label for="active">Estado</label>
                                 <select class="form-control" id="active" name="active">
                                     <option value="1"
@@ -104,12 +124,42 @@
                                 </select>
                             </div>
 
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
 
                             <button type="submit" class="btn btn-primary btn-block">Actualizar categoria</button>
                         </form>
                         <?php endif; ?>
+
+
+
+                        <?php if($mostrar): ?>
+
+                        <?php /*Formulario de registro*/ ?>
+                        <form action="/actions/act_categoria.php" method="POST">
+
+                            <?php /*se manera un if y un elseif donde se para una valor igual a crear el cual entrara en el if y ejecutara el insert*/ ?>
+
+                            <input type="hidden" name="accion" value="crear">
+
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dias_max_prestamo">Dias maximos de prestamo</label>
+                                <input type="number" class="form-control" id="dias_max_prestamo"
+                                    name="dias_max_prestamo" minlength="8" required>
+                            </div>
+
+                            <input type="hidden" name="csrf_token"
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+
+                            <button type="submit" class="btn btn-primary btn-block">Crear Categoria</button>
+                        </form>
+                        <?php endif; ?>
+
 
                     </div>
                 </div>

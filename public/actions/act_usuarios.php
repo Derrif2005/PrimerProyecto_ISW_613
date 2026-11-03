@@ -63,6 +63,9 @@ if(
     {
      http_response_code(403);
     exit('No tiene permisos para actualizar usuarios');
+
+
+    
     } 
 
 
@@ -92,6 +95,14 @@ if(
     $consulta->execute(['nombre' => trim($nombre), 'correo' => trim($correo), 'id_rol' => $id_rol, 'active' => $active, 'id' =>$id ]); 
     header('Location: /actions/act_buscar_usuarios.php?success=1');
     exit;
+
+     //Al terminar borra el codigo para generar uno nuevo al recargar
+    unset($_SESSION['csrf_token']);
+
+    //Vuelve al formulario mostrando un mesaje de exito
+    header('Location: /actions/act_buscar_usuarios.php?ok=1');
+    exit;
+
     } catch(PDOException $error){
     // Registrara el error sin mostralos en la vista
     error_log('Error de actualizacion'.$error->getMessage());

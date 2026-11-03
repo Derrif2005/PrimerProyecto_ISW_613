@@ -5,11 +5,6 @@
 ?>
 
 <body>
-     <?php
-    // Mostrar la barra de navegación.
-    require_once __DIR__ . '/pages/common/navbar.php';
-    ?>
-
     <div class="container mt-5">
         <h1 class="text-center">Prestamos UTN</h1>
         <p class="text-center">Esta pagina es para uso estudiantil ya que los estudiantes ocupan equipos y la

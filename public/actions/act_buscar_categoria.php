@@ -25,7 +25,17 @@ if (empty($_SESSION['csrf_token'])) {
         $encontrarCategoria = findcategorias($conn,trim($_GET['buscar_categoria']));
     }
 
+    //Se inicia vacia para luego ser llenada 
+    $ultimaID = 0;
+    if(isset($_GET['Cargar_id']) && is_string($_GET['Cargar_id'])){
+        //Busca la ultima id en MYSQL
+        $encontrarCategoria = findcategorias($conn,trim($_GET['Cargar_id']) + 1);
+    }
+
+
 //Variable para guardar todo los usuarios
 $Categorias = getCategorias($conn); 
+//Variable para mostrar el formulario de crear
+$mostrar = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos del usuario
 require __DIR__ . '/../pages/view_categorias.php';
