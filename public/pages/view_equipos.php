@@ -1,6 +1,6 @@
 <?php
     require_once __DIR__ . '/../../config/conexion.php';
-    require_once __DIR__ . '/../../config/buscar_usuarios.php';
+    require_once __DIR__ . '/../../config/buscar_equipos.php';
     require_once __DIR__ . '/../../config/auth.php';
 
 
@@ -18,38 +18,40 @@
     ?>
     <div class="container-fluid">
         <div class="jumbotron">
-            <h1 class="display-4">Usuarios</h1>
-            <p class="lead">Lista de usuarios</p>
+            <h1 class="display-4">Equipos</h1>
+            <p class="lead">Lista de equipos</p>
             <hr class="my-4">
         </div>
 
         <?php /*btn para mostrar el formulario de crear*/ ?>
-        <a href="/actions/act_buscar_usuarios.php?nuevo=1" class="btn btn-primary mb-3">Nuevo usuario</a>
+        <a href="/actions/act_buscar_equipos.php?nuevo=1" class="btn btn-primary mb-3">Nuevo equipo</a>
             
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Categoria</th>
                     <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>acciones</th>
+                    <th>Codigo</th>
+                    <th>Activo</th>
+                    <th>Imagen</th>
+                    <th>version</th>
+                    <th>Eliminado_en</th>
                 </tr>
             </thead>
 
             <tbody>
-                <?php foreach ($users as $user): ?>
+                <?php foreach ($equipos as $equipo): ?>
                 <tr>
-                    <td scope="row"><?php echo (int) $user['id']; ?></td>
-                    <td><?php echo htmlspecialchars($user['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($user['correo']); ?></td>
-                    <td><?php echo htmlspecialchars($user['rol']); ?></td>
-                    <td><?php if((int)$user['active'] === 1){
-                echo 'Activo';              
-            } else { 
-                echo 'Inactivo';
-            }  
+                    <td scope="row"><?php echo (int) $equipo['id']; ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Categoria']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Codigo']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Activo']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Imagen']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['version']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['Eliminado_en']); ?></td>
+
              ?>
                     </td>
                     <td>
