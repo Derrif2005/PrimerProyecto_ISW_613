@@ -2,11 +2,10 @@
 
 function getEquipos(PDO $conn)
 {
-    return $conn->query(
-        'SELECT e.id, e.nombre, e., u.active, r.nombre AS rol 
+    return $conn->query( 'SELECT e.id, e.categoria_id, c.nombre AS categoria, e.nombre,  e.codigo, e.active, e.imagen_ruta, e.versionn, e.eliminado_en  
          FROM equipos e
-         LEFT JOIN roles r ON r.id = u.id_rol
-         ORDER BY u.id'
+         LEFT JOIN categorias c ON c.id = e.categoria_id WHERE e.active = true
+         ORDER BY e.id'
     )->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -17,22 +16,26 @@ function getEquipos(PDO $conn)
  * @return array An array of associative arrays, each representing a province
  */
 
-//obtiene todos los correos 
-function getcorreo(PDO $conn) {
-    return $conn->query('SELECT correo FROM usuarios ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+/*
+//obtiene todos los nombres 
+function getNombres(PDO $conn) {
+    return $conn->query('SELECT nombre FROM usuarios ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
 }
-
-/**
+*/
+/* 
  * Finds a province by its ID
  * @param PDO $conn The database connection
  * @param int $provinceId The ID of the province to find
  * @return array|null An associative array with 'id' and 'name' keys if found, or null if not found
  */
 
-//busca los usuarios por correo
-function findcorreo(PDO $conn, $correo)
+
+
+
+//busca los equipos por nombre
+function findNombresEquipos(PDO $conn, $nombreEquipo)
 {
-    $statement = $conn->prepare('SELECT id, nombre, correo, id_rol, active FROM usuarios WHERE correo = :correo LIMIT 1');
-    $statement->execute(['correo' => $correo]);
+    $statement = $conn->prepare('SELECT id, nombre, categoria_id, codigo, active, imagen_ruta, versionn, eliminado_en FROM equipos WHERE nombre = :nombreEquipo AND active = true LIMIT 1');
+    $statement->execute(['nombreEquipo' => $nombreEquipo]);
     return $statement->fetch(PDO::FETCH_ASSOC);
 }

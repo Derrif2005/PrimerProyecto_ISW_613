@@ -1,5 +1,7 @@
 <?php
 
+
+//Obtiene todo lo datos de la tabla usuarios y los devuelve en un array PDO
 function getUsers(PDO $conn)
 {
     return $conn->query(

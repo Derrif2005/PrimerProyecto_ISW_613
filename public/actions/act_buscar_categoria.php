@@ -16,7 +16,7 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-//Busca usuarios por medio del correo 
+//Busca categorias por medio del nombre 
  //Si no exisite tendra un valor falso
   $encontrarCategoria = false;
     //Comprueba que la categoria existe y si es texto

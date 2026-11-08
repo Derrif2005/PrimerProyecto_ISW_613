@@ -16,20 +16,20 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-//Busca usuarios por medio del correo 
+//Busca equipos por medio del nombre 
  //Si no exisite tendra un valor falso
   $encontrarEquipo = false;
     //Comprueba que la categoria existe y si es texto
     if(isset($_GET['buscar_equipo']) && is_string($_GET['buscar_equipo'])){
         //Busca la categoria en MYSQL
-        $encontrarEquipo = findequipos($conn,trim($_GET['buscar_equipo']));
+        $encontrarEquipo = findNombresEquipos($conn,trim($_GET['buscar_equipo']));
     }
 
     //Se inicia vacia para luego ser llenada 
     $ultimaID = 0;
     if(isset($_GET['Cargar_id']) && is_string($_GET['Cargar_id'])){
         //Busca la ultima id en MYSQL
-        $encontrarEquipo = findequipos($conn,trim($_GET['Cargar_id']) + 1);
+        $encontrarEquipo = findNombresEquipos($conn,trim($_GET['Cargar_id']) + 1);
     }
 
 

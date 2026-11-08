@@ -1,7 +1,7 @@
 <?php
 
 
-
+//obtiene todos las categorias y si hay uno false no lo agrega ala lista
 function getCategorias(PDO $conn)
 {
     return $conn->query('SELECT id, nombre, dias_max_prestamo, active FROM categorias WHERE active = true ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
@@ -14,7 +14,7 @@ function getCategorias(PDO $conn)
  */
 
 
-//obtiene todos las categorias y si hay uno false no lo agrega ala lista
+//obtiene todos los nombres de categorias
 function getCatego(PDO $conn) {
     return $conn->query('SELECT nombre FROM categorias ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
 }
