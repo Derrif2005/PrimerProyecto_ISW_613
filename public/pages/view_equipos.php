@@ -1,7 +1,7 @@
 <?php
     require_once __DIR__ . '/../../config/conexion.php';
-    require_once __DIR__ . '/../../config/buscar_equipos.php';
-    require_once __DIR__ . '/../../config/auth.php';
+    require_once __DIR__ . '/../../includes/buscar_equipos.php';
+    require_once __DIR__ . '/../../includes/auth.php';
 
 
   // The users list is only reachable with a valid, active session
@@ -41,27 +41,32 @@
             </thead>
 
             <tbody>
-                <?php foreach ($equipos as $equipo): ?>
+                <?php foreach ($Equipos as $equipo): ?>
                 <tr>
                     <td scope="row"><?php echo (int) $equipo['id']; ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Categoria']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Codigo']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Activo']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Imagen']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['version']); ?></td>
-                    <td><?php echo htmlspecialchars($equipo['Eliminado_en']); ?></td>
-
+                    <td><?php echo htmlspecialchars($equipo['categoria'] ?? 'Sin categoría' ); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['codigo']); ?></td>
+                    <td><?php  if((int)$equipo['active'] === 1){
+                        echo 'Activo';
+                    } else {
+                        echo 'Inactivo';
+                    } 
                     ?>
                     </td>
+                    <td><?php echo htmlspecialchars($equipo['imagen_ruta'] ?? 'Sin imagen' ); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['versionn']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['eliminado_en'] ?? 'No eliminado' ); ?></td>
+
+                    
                     <td>
                         <?php /*este codigo se puede utilizar*/ ?>
-                        <a href="/actions/act_buscar_equipos.php?buscar_equipo=<?php echo urlencode($equipo['equipo']); ?>"
+                        <a href="/actions/act_buscar_equipos.php?buscar_equipo=<?php echo urlencode($equipo['nombre']); ?>"
                             class="btn btn-warning btn-sm">
                             Editar
                         </a>
                         <form action="/actions/act_equipos.php" method="POST" class="d-inline"
-                            onsumit="return confirm('Desea eliminar el equipo puede producir un desastre en la base de datos')">
+                            onsubmit="return confirm('Desea eliminar el equipo puede producir un desastre en la base de datos')">
 
                             <input type="hidden" name="accion" value="eliminar">
                             <input type="hidden" name="id" value="<?php echo (int)$equipo['id']; ?>">
@@ -95,7 +100,7 @@
                         <?php/*Formulario de actualizar*/?>
                         <?php if($encontrarEquipo !== false): ?>
 
-                        <form action="/actions/act_equipos.php" method="POST">
+                        <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
                             <?php /*se manera un if y un elseif donde se para una valor igual a actualizar el cual entrara en el if y ejecutara el insert*/?>
                             <input type="hidden" name="accion" value="actualizar">
 
@@ -117,18 +122,20 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="categoria">Categoria</label>
-                                <input type="text" class="form-control" id="categoria" name="categoria"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['Categoria'], ENT_QUOTES, 'UTF-8') ?>"
-                                    maxlength="50" required>
+                                <label for="categoria_id">categoria</label>
+                                
+                                <option value="<?php echo (int)$categoria['id']; ?>"
+                                <?php if((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
+                                    <?php echo htmlspecialchars($categoria['nombre']); ?>
+                                </option>
                             </div>
 
                             <div class="form-group">
                                 <label for="codigo">Codigo</label>
                                 <input type="text" class="form-control" id="codigo" name="codigo"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['Codigo'], ENT_QUOTES, 'UTF-8') ?>"
+                                    value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8') ?>"
                                     maxlength="50" required>
-
+                            </div>
                             
                             <div class="form-group">
                                 <label for="active">Estado</label>
@@ -147,22 +154,20 @@
 
                             <div class="form-group">
                                 <label for="imagen">Imagen</label>
-                                <input type="text" class="form-control" id="imagen" name="imagen"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['Imagen'], ENT_QUOTES, 'UTF-8') ?>"
-                                    maxlength="50" required>
+                                <input type="file" class="form-control" id="image" name="image[]" accept="image/jpeg,image/png,image/webp" multiple >
                             </div>
 
 
 
                             <div class="form-group">
                                 <label for="version">Version</label>
-                                <input type="hidden" class="form-control" id="version" name="version"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['version'], ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="text" class="form-control" id="version" name="version"
+                                    value="<?php echo htmlspecialchars($encontrarEquipo['versionn'], ENT_QUOTES, 'UTF-8') ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="eliminado_en">Eliminado en</label>
-                                <input type="hidden" class="form-control" id="eliminado_en" name="eliminado_en"
+                                <input type="text" class="form-control" id="eliminado_en" name="eliminado_en"
                                     value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'], ENT_QUOTES, 'UTF-8') ?>">
 
                             </div>

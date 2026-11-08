@@ -3,9 +3,11 @@ session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
-require_once __DIR__ . '/../../config/buscar_equipos.php';
-require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../includes/buscar_equipos.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
+//Llama a la funcion para llegar la categoria
+require_once __DIR__ . '/../../includes/buscar_categorias.php';
 
 requireLogin();
 
@@ -35,7 +37,11 @@ if (empty($_SESSION['csrf_token'])) {
 
 //Variable para guardar todo los equipos
 $Equipos = getEquipos($conn); 
+
+//Variable para cargar las categorias para el select
+$Categorias = getCategorias($conn);
+
 //Variable para mostrar el formulario de crear
-$mostrar = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
+$mostrarE = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos del usuario
 require __DIR__ . '/../pages/view_equipos.php';

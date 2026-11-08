@@ -1,7 +1,7 @@
 <?php
     require_once __DIR__ . '/../../config/conexion.php';
-    require_once __DIR__ . '/../../config/buscar_categorias.php';
-    require_once __DIR__ . '/../../config/auth.php';
+    require_once __DIR__ . '/../../includes/buscar_categorias.php';
+    require_once __DIR__ . '/../../includes/auth.php';
 
 
   // The users list is only reachable with a valid, active session
@@ -54,7 +54,7 @@
                         <a href="/actions/act_buscar_categoria.php?buscar_categoria=<?php echo urlencode($categoria['nombre']); ?>" class="btn btn-warning btn-sm">
                             Editar
                         </a>
-                        <form action="/actions/act_categoria.php" method="POST" class="d-inline" onsumit="return confirm('Desea eliminar la categoria puede producir un desastre en la base de datos')">
+                        <form action="/actions/act_categoria.php" method="POST" class="d-inline" onsubmit="return confirm('Desea eliminar la categoria puede producir un desastre en la base de datos')">
                     
                             <input type="hidden" name="accion" value="eliminar">
                             <input type="hidden" name="id" value="<?php echo (int)$categoria['id']; ?>">

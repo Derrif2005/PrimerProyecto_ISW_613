@@ -3,8 +3,8 @@ session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
-require_once __DIR__ . '/../../config/buscar_categorias.php';
-require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../includes/buscar_categorias.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
 
 requireLogin();

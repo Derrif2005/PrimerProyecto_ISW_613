@@ -4,14 +4,14 @@ session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
-require_once __DIR__ . '/../../config/buscar_usuarios.php';
+require_once __DIR__ . '/../../includes/buscar_usuarios.php';
 
 //Comprobara si tiene una sesion iniciada y ahora tambien si es administrador
-require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
 
 //Mensajes de error
-require_once __DIR__ . '/../../config/mensajes.php';
+require_once __DIR__ . '/../../includes/mensajes.php';
 
 
 requireLogin();

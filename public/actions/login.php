@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/conexion.php';
-require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
 $correo = $_POST['correo'] ?? null;
 $password = $_POST['password'] ?? null;

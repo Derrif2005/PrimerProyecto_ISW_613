@@ -1,7 +1,16 @@
 <?php   
  
  session_start();
+
+
+require_once __DIR__ . '/../../includes/auth.php';
+
+    requireLogin();
+
  require_once __DIR__ . '/common/header.php';
+
+
+
 ?>
 
 <body>
@@ -47,7 +56,7 @@
                 </div>
                 <div class="card-body">
                     <p>Consultar los equipos</p>
-                      <a href="/pages/view_equipos.php" class="btn btn-primary btn-block">Abrir</a>
+                      <a href="/actions/act_buscar_equipos.php" class="btn btn-primary btn-block">Abrir</a>
                 </div>
             </div>
         </div>   

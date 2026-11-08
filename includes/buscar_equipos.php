@@ -16,12 +16,14 @@ function getEquipos(PDO $conn)
  * @return array An array of associative arrays, each representing a province
  */
 
-/*
+
 //obtiene todos los nombres 
-function getNombres(PDO $conn) {
-    return $conn->query('SELECT nombre FROM usuarios ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+function getImagenesEquipo(PDO $conn, $equipo_id) {
+    $consulta = $conn->prepare('SELECT id FROM equipo_imagenes WHERE equipo_id :equipo_id ORDER BY id');
+    $consulta->execute(['equipo_id' => $equipo_id]);
+    return $consulta->fetchAll(PDO::FETCH_ASSOC);
 }
-*/
+
 /* 
  * Finds a province by its ID
  * @param PDO $conn The database connection

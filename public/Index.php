@@ -1,6 +1,6 @@
 <?php   
     require_once __DIR__ . '/pages/common/header.php';
-    require_once __DIR__ . '/../config/auth.php';
+    require_once __DIR__ . '/../includes/auth.php';
     $rememberedUsername = $_COOKIE['remembered_username'] ?? '';
 ?>
 

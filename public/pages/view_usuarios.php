@@ -1,9 +1,9 @@
 <?php
     require_once __DIR__ . '/../../config/conexion.php';
-    require_once __DIR__ . '/../../config/buscar_usuarios.php';
-    require_once __DIR__ . '/../../config/auth.php';
+    require_once __DIR__ . '/../../includes/buscar_usuarios.php';
+    require_once __DIR__ . '/../../includes/auth.php';
 
-
+    require_once __DIR__ . '/../../includes/buscar_categorias.php';
   // The users list is only reachable with a valid, active session
   requireLogin();
 
@@ -57,7 +57,7 @@
                         <a href="/actions/act_buscar_usuarios.php?buscar_correo=<?php echo urlencode($user['correo']); ?>" class="btn btn-warning btn-sm">
                             Editar
                         </a>
-                        <form action="/actions/act_usuarios.php" method="POST" class="d-inline" onsumit="return confirm('Desea eliminar el usuario puede producir un desastre en la base de datos')">
+                        <form action="/actions/act_usuarios.php" method="POST" class="d-inline" onsubmit="return confirm('Desea eliminar el usuario puede producir un desastre en la base de datos')">
                     
                             <input type="hidden" name="accion" value="eliminar">
                             <input type="hidden" name="id" value="<?php echo (int)$user['id']; ?>">
