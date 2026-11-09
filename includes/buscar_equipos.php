@@ -19,7 +19,7 @@ function getEquipos(PDO $conn)
 
 //obtiene todos los nombres 
 function getImagenesEquipo(PDO $conn, $equipo_id) {
-    $consulta = $conn->prepare('SELECT id FROM equipo_imagenes WHERE equipo_id :equipo_id ORDER BY id');
+    $consulta = $conn->prepare('SELECT id FROM equipo_imagenes WHERE equipo_id = :equipo_id ORDER BY id');
     $consulta->execute(['equipo_id' => $equipo_id]);
     return $consulta->fetchAll(PDO::FETCH_ASSOC);
 }

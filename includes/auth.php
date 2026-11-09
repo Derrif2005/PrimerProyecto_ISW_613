@@ -113,7 +113,7 @@ function forgetUsername()
     if($usuario === false || (int)$usuario['id_rol'] !== 1 || (int)$usuario['active'] !== 1)
     {
      http_response_code(403);
-    exit('No tiene permisos para actualizar usuarios');
+    exit('No tiene permisos para actualizar datos');
     }
     } catch (PDOException $error) {
         error_log('Error al comprobar permisos: ' . $error->getMessage());

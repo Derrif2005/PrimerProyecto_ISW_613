@@ -54,11 +54,32 @@
                     } 
                     ?>
                     </td>
-                    <td><?php echo htmlspecialchars($equipo['imagen_ruta'] ?? 'Sin imagen' ); ?></td>
+
+                    <td><?php
+                    //Busca las imagenes del equipo que se le pasara el id
+                    $imagen = getImagenesEquipo($conn, (int)$equipo['id']);
+                    ?>
+
+                        <?php if (empty($imagen)): ?>
+
+                        sin imagen
+
+                        <?php else: ?>
+
+                        <?php foreach ($imagen as $imagen): ?>
+
+                        <img src="/actions/ver_imagen_equipo.php?id=<?php echo (int)$imagen['id']; ?>"
+                            alt="imagen del equipo" width="80" height="80" style="object-fit: cover; margin: 3px;">
+
+                        <?php endforeach; ?>
+
+                        <?php endif; ?>
+                    </td>
+
                     <td><?php echo htmlspecialchars($equipo['versionn']); ?></td>
                     <td><?php echo htmlspecialchars($equipo['eliminado_en'] ?? 'No eliminado' ); ?></td>
 
-                    
+
                     <td>
                         <?php /*este codigo se puede utilizar*/ ?>
                         <a href="/actions/act_buscar_equipos.php?buscar_equipo=<?php echo urlencode($equipo['nombre']); ?>"
@@ -108,7 +129,7 @@
 
                             <?php//Continuar aqui?>
 
-                             <div class="form-group">
+                            <div class="form-group">
                                 <input type="hidden" class="form-control" id="id" name="id"
                                     value="<?php echo htmlspecialchars($encontrarEquipo['id'], ENT_QUOTES, 'UTF-8') ?>">
                             </div>
@@ -123,122 +144,125 @@
 
                             <div class="form-group">
                                 <label for="categoria_id">categoria</label>
-                                
-                                <option value="<?php echo (int)$categoria['id']; ?>"
-                                <?php if((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
-                                    <?php echo htmlspecialchars($categoria['nombre']); ?>
-                                </option>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="codigo">Codigo</label>
-                                <input type="text" class="form-control" id="codigo" name="codigo"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8') ?>"
-                                    maxlength="50" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="active">Estado</label>
-                                <select class="form-control" id="active" name="active">
-                                    <option value="1"
-                                        <?php if((int)$encontrarEquipo['active'] === 1)echo 'selected'; ?>>
-                                        Activo
-                                    </option>
-
-                                    <option value="0"
-                                        <?php if((int)$encontrarEquipo['active'] === 0)echo 'selected'; ?>>
-                                        Inactivo
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="imagen">Imagen</label>
-                                <input type="file" class="form-control" id="image" name="image[]" accept="image/jpeg,image/png,image/webp" multiple >
-                            </div>
-
-
-
-                            <div class="form-group">
-                                <label for="version">Version</label>
-                                <input type="text" class="form-control" id="version" name="version"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['versionn'], ENT_QUOTES, 'UTF-8') ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="eliminado_en">Eliminado en</label>
-                                <input type="text" class="form-control" id="eliminado_en" name="eliminado_en"
-                                    value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'], ENT_QUOTES, 'UTF-8') ?>">
-
-                            </div>
-
-
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
-
-
-                            <button type="submit" class="btn btn-primary btn-block">Actualizar cuenta</button>
-                        </form>
-                        <?php endif; ?>
-
-
-
-
-
-                        <?php if($mostrarE): ?>
-
-                        <?php /*Formulario de registro para crear equipos*/ ?>
-                        <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
-
-                            <?php /*se manera un if y un elseif donde se para una valor igual a crear el cual entrara en el if y ejecutara el insert*/ ?>
-
-                            <input type="hidden" name="accion" value="crear">
-
-                            <div class="form-group">
-                                <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50"
-                                    required>
-                            </div>
-
-                            
-                            <div class="form-group">
-                                <label for="categoria_id">categoria</label>
-                                
                                 <select class="form-control" id="categoria_id" name="categoria_id" required>
-                                   <?php foreach($Categorias as $categoria): ?>
-                                    <option value="<?php echo (int)$categoria["id"];?>">
-                                        <?php echo htmlspecialchars($categoria["nombre"]);?>
+                                    <?php foreach ($Categorias as $categoria): ?>
+                                    <option value="<?php echo (int)$categoria['id']; ?>"
+                                        <?php if ((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
+                                        <?php echo htmlspecialchars($categoria['nombre']); ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
 
+                    
 
-                            <div class="form-group">
-                                <label for="codigo">codigo</label>
-                                <input type="text" class="form-control" id="codigo" name="codigo" maxlength="50"
-                                    required>
-                            </div>
+                    <div class="form-group">
+                        <label for="codigo">Codigo</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo"
+                            value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8') ?>"
+                            maxlength="50" required>
+                    </div>
 
-                            <div class="form-group">
-                                <label for="image">Imagenes</label>
-                                <input type="file" class="form-control" id="image" name="image[]" accept="image/jpeg,image/png,image/webp" multiple required>
-                            </div>
+                    <div class="form-group">
+                        <label for="active">Estado</label>
+                        <select class="form-control" id="active" name="active">
+                            <option value="1" <?php if((int)$encontrarEquipo['active'] === 1)echo 'selected'; ?>>
+                                Activo
+                            </option>
 
-                           
+                            <option value="0" <?php if((int)$encontrarEquipo['active'] === 0)echo 'selected'; ?>>
+                                Inactivo
+                            </option>
+                        </select>
+                    </div>
 
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+                    <div class="form-group">
+                        <label for="imagen">Imagen</label>
+                        <input type="file" class="form-control" id="image" name="image[]"
+                            accept="image/jpeg,image/png,image/webp" multiple>
+                    </div>
 
-                            <button type="submit" class="btn btn-primary btn-block">Crear Equipo</button>
-                        </form>
-                        <?php endif; ?>
 
+
+                    <div class="form-group">
+                        <label for="version">Version</label>
+                        <input type="text" class="form-control" id="version" name="version"
+                            value="<?php echo htmlspecialchars($encontrarEquipo['versionn'], ENT_QUOTES, 'UTF-8') ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eliminado_en">Eliminado en</label>
+                        <input type="text" class="form-control" id="eliminado_en" name="eliminado_en"
+                        value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
                     </div>
+
+
+                    <input type="hidden" name="csrf_token"
+                        value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+
+
+                    <button type="submit" class="btn btn-primary btn-block">Actualizar cuenta</button>
+                    </form>
+                    <?php endif; ?>
+
+
+
+
+
+                    <?php if($mostrarE): ?>
+
+                    <?php /*Formulario de registro para crear equipos*/ ?>
+                    <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
+
+                        <?php /*se manera un if y un elseif donde se para una valor igual a crear el cual entrara en el if y ejecutara el insert*/ ?>
+
+                        <input type="hidden" name="accion" value="crear">
+
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="categoria_id">categoria</label>
+
+                            <select class="form-control" id="categoria_id" name="categoria_id" required>
+                                <?php foreach($Categorias as $categoria): ?>
+                                <option value="<?php echo (int)$categoria["id"];?>">
+                                    <?php echo htmlspecialchars($categoria["nombre"]);?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="codigo">codigo</label>
+                            <input type="text" class="form-control" id="codigo" name="codigo" maxlength="50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image">Imagenes</label>
+                            <input type="file" class="form-control" id="image" name="image[]"
+                                accept="image/jpeg,image/png,image/webp" multiple required>
+                        </div>
+
+
+
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+
+                        <button type="submit" class="btn btn-primary btn-block">Crear Equipo</button>
+                    </form>
+                    <?php endif; ?>
+
+
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
 
