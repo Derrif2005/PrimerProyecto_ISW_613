@@ -7,6 +7,9 @@
   // The users list is only reachable with a valid, active session
   requireLogin();
 
+  // Comprueba que pueda consultar equipos
+validarPermiso($conn, 'equipos_ver');
+
  
 ?>
 <?php require_once 'common/header.php'; ?>

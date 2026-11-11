@@ -30,7 +30,49 @@ if (empty($_SESSION['csrf_token'])) {
     }
 
 //Variable para guardar todo los usuarios
-$users = getUsers($conn); 
+//Se implementara modificacion para mostrar una cantidad n de ususario por pagina $users = getUsers($conn);
+
+    // Obtiene el numero de pagina desde la URL
+    $pagina = $_GET['pagina'] ?? '1';
+
+    // Valida que la pagina sea un numero entero positivo
+    if (!is_string($pagina) || !ctype_digit($pagina) || (int)$pagina < 1) {
+        $pagina = 1;
+    } else {
+        $pagina = (int)$pagina;
+    }
+
+    // Obtiene la cantidad solicitada por el usuario
+    $cantidad = $_GET['cantidad_usuarios'] ?? null;
+
+    // Cantidad por defecto
+    $limite = 10;
+
+    // Comprueba que la cantidad sea un numero valido
+    if (is_string($cantidad) && ctype_digit($cantidad)) {
+
+        // Convierte la cantidad a un numero entero
+        $cantidad = (int)$cantidad;
+
+        // Comprueba que la cantidad este entre 1 y 100
+        if ($cantidad >= 1 && $cantidad <= 100) {
+
+            // Guarda la cantidad seleccionada en la variable limite
+            $limite = $cantidad;
+        }
+    }
+
+    // Calcula cuantos usuarios debemos saltar
+    $offset = ($pagina - 1) * $limite;
+
+    // Obtiene los usuarios de la pagina seleccionada
+    $users = getUsers($conn, $limite, $offset);
+
+    // Obtiene los usuarios de la pagina seleccionada
+    $users = getUsers($conn, $limite, $offset); 
+
+
+
 //Variable para mostrar el formulario de crear
 $mostrarU = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos del usuario

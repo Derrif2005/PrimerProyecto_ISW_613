@@ -7,6 +7,10 @@
   // The users list is only reachable with a valid, active session
   requireLogin();
 
+
+// Comprueba que sea administrador
+validarAdmin($conn);
+
  
 ?>
 <?php require_once 'common/header.php'; ?>

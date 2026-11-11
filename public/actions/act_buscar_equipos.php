@@ -11,6 +11,8 @@ require_once __DIR__ . '/../../includes/buscar_categorias.php';
 
 requireLogin();
 
+validarPermiso($conn, 'equipos_ver');
+
 // comprueba si el todavia tiene token 
 if (empty($_SESSION['csrf_token'])) {
 
