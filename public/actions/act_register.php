@@ -44,7 +44,7 @@ if(
 try{
     //Busca por id 
     $consulta = $conn->prepare('SELECT id FROM roles WHERE nombre =:nombre LIMIT 1');
-    $consulta->execute(['nombre' => 'operador']);/*cambiar esto en el futuro*/ 
+    $consulta->execute(['nombre' => 'profesor']);/*cambiar esto en el futuro*/ 
     $rol = $consulta->fetch(PDO::FETCH_ASSOC);
 
     // Si el rol no existe no se puede registar
@@ -70,6 +70,9 @@ try{
     //Vuelve al formulario mostrando un mesaje de exito
     header('Location: /pages/register.php?ok=1');
     exit;
+
+  header('Location: /index.php?success=logged_out');
+  
 } catch(PDOException $error){
     // Registrara el error son mostralos en la vista
     error_log('Error de registro'.$error->getMessage());

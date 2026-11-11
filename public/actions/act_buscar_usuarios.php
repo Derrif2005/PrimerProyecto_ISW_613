@@ -9,6 +9,8 @@ require_once __DIR__ . '/../../includes/auth.php';
 
 requireLogin();
 
+validarAdmin($conn);
+
 // comprueba si el todavia tiene token 
 if (empty($_SESSION['csrf_token'])) {
 

@@ -139,4 +139,37 @@ function validarRol(PDO $conn, $id_rol) {
 
 
 
+//Comprueba si el usuario tiene permiso para realizar una accion
+function validarPermiso(PDO $conn, $permiso) {
+
+    //Obtiene el ID del usuario que inicio sesion
+    $usuario_id = $_SESSION['user_id'] ?? null;
+
+    //Comprueba si existe una sesion valida
+    if (!is_numeric($usuario_id) || (int)$usuario_id < 1) {
+        http_response_code(403);
+        exit('Acceso denegado');
+    }
+
+    //Busca si el rol del usuario tiene el permiso solicitado
+    $consulta = $conn->prepare(
+        'SELECT p.id FROM usuarios u
+         INNER JOIN rol_permiso rp ON rp.rol_id = u.id_rol
+         INNER JOIN permisos p ON p.id = rp.permiso_id
+         WHERE u.id = :usuario_id AND u.active = 1 AND p.clave = :permiso LIMIT 1'
+    );
+
+    $consulta->execute(['usuario_id' => $usuario_id,'permiso' => $permiso]);
+
+    //Obtiene el permiso encontrado
+    $permiso_existente = $consulta->fetch(PDO::FETCH_ASSOC);
+
+    //Si no tiene el permiso, detiene la operacion
+    if ($permiso_existente === false) {
+        http_response_code(403);
+        exit('No tiene permisos para realizar esta accion');
+    }
+}
+
+
 ?>

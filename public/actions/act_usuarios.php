@@ -89,12 +89,6 @@ validarAdmin($conn);
     header('Location: /actions/act_buscar_usuarios.php?ok=1');
     exit;
 
-     //Al terminar borra el codigo para generar uno nuevo al recargar
-    unset($_SESSION['csrf_token']);
-
-    //Vuelve al formulario mostrando un mesaje de exito
-    header('Location: /actions/act_buscar_usuarios.php?ok=1');
-    exit;
 
     } catch(PDOException $error){
     // Registrara el error sin mostralos en la vista
@@ -150,8 +144,15 @@ validarAdmin($conn);
             exit;
         }
 
-        $consulta = $conn->prepare('DELETE FROM usuarios WHERE id = :id');
-        $consulta->execute(['id' => $id ]);
+        // Comprueba que el administrador no se desactive a si mismo
+        if ((int)$_SESSION['user_id'] === (int)$id) {
+            header('Location: /actions/act_buscar_usuarios.php?error=1');
+            exit;
+        }
+
+        $consulta = $conn->prepare('UPDATE usuarios SET active = 0 WHERE id = :id and active = 1');
+
+        $consulta->execute(['id' => $id]);
 
         //Al terminar borra el codigo para generar uno nuevo al recargar
         unset($_SESSION['csrf_token']);

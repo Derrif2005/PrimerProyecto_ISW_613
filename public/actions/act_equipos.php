@@ -281,6 +281,8 @@ validarAdmin($conn);
 
             $consulta->execute(['id' => $id]);
 
+            
+
             // Si todo sale bien, regresa a equipos
             header('Location: /actions/act_buscar_equipos.php?success=1');
             exit;

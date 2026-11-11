@@ -5,10 +5,8 @@
 function getUsers(PDO $conn)
 {
     return $conn->query(
-        'SELECT u.id, u.nombre, u.correo, u.active, r.nombre AS rol 
-         FROM usuarios u
-         LEFT JOIN roles r ON r.id = u.id_rol
-         ORDER BY u.id'
+        'SELECT u.id, u.nombre, u.correo, u.active, r.nombre AS rol FROM usuarios u
+         LEFT JOIN roles r ON r.id = u.id_rol WHERE u.active = true ORDER BY u.id'
     )->fetchAll(PDO::FETCH_ASSOC);
 }
 

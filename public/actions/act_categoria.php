@@ -136,8 +136,8 @@ $accion = $_POST['accion'] ?? '';
             exit;
         }
 
-    $consulta = $conn->prepare('DELETE FROM categorias WHERE id = :id');
-    $consulta->execute(['id' => $id ]);
+    $consulta = $conn->prepare('UPDATE categorias SET active = 0 WHERE id = :id and active = 1');
+    $consulta->execute(['id' => $id]);
 
     //Al terminar borra el codigo para generar uno nuevo al recargar
     unset($_SESSION['csrf_token']);

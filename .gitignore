@@ -9,12 +9,6 @@ config/database.php
 /vendor/
 /node_modules/
 
-# Bases de datos locales y respaldos
-*.sql
-*.sqlite
-*.sqlite3
-*.db
-*.bak
 
 # Logs, caché y temporales
 *.log
