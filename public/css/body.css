@@ -50,3 +50,83 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+
+
+/* Organizar tarjetas en dos columnas */
+.cuadricula {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+/* Tarjetas */
+.tarjeta-inicio {
+    background-color: white;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px #ddd;
+    text-align: center;
+}
+
+/* Titulos */
+.tarjeta-inicio h2 {
+    margin-top: 0;
+}
+
+/* Textos */
+.tarjeta-inicio p {
+    margin-bottom: 20px;
+}
+
+/* Botones */
+.tarjeta-inicio .boton {
+    display: block;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+
+
+/* TABLAS */
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 20px;
+}
+
+.tabla th,
+.tabla td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabla th {
+    background-color: #0066cc;
+    color: white;
+}
+
+/* PAGINACION */
+
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+
+/* IMAGENES DE LOS EQUIPOS */
+
+.imagen-equipo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin: 3px;
+}

@@ -81,3 +81,26 @@
     font-size: 14px;
 
 }
+
+
+/* Boton para editar */
+
+.boton-editar {
+    background-color: orange;
+}
+
+.boton-editar:hover {
+    background-color: darkorange;
+}
+
+/* Formulario dentro de la tabla */
+
+.tabla form {
+    display: inline;
+}
+
+/* Espacio entre botones de la tabla */
+
+.tabla .boton {
+    padding: 8px 12px;
+}

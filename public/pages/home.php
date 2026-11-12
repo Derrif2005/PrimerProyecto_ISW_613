@@ -14,70 +14,51 @@ require_once __DIR__ . '/../../includes/auth.php';
 ?>
 
 <body>
-     <?php
+    <?php
     // Mostrar la barra de navegación.
     require_once __DIR__ . '/common/navbar.php';
     ?>
 
-    <div class="container mt-5">
-        <div class="row">
-        <!-- div de usuarios -->
-        <div class="col-md-6 mb-3">
-            <div class="card">
-                <div class="card-header">
-                    usuarios
-                </div>
-                <div class="card-body">
-                    <p>Consultar los usuarios</p>
-                      <a href="/actions/act_buscar_usuarios.php" class="btn btn-primary btn-block">Abrir</a>
-                </div>
+    <div class="contenedor">
+        <div class="cuadricula">
+            <!-- div de usuarios -->
+            <div class="tarjeta-inicio">
+                <h2>usuarios</h2>
+                <p>Consultar los usuarios</p>
+                <a href="/actions/act_buscar_usuarios.php" class="boton boton-completo">Abrir</a>
             </div>
-        </div>   
 
- <!-- div de categorias -->
-        <div class="col-md-6 mb-3 ">
-            <div class="card">
-                <div class="card-header">
-                    categorias
-                </div>
-                <div class="card-body">
-                    <p>Consultar las categorias</p>
-                      <a href="/actions/act_buscar_categoria.php" class="btn btn-primary btn-block">Abrir</a>
-                </div>
-            </div>
-        </div>   
 
-        
- <!-- div de equipos -->
-        <div class="col-md-6 mb-3 ms-auto">
-            <div class="card">
-                <div class="card-header ">
-                    equipos
-                </div>
-                <div class="card-body">
-                    <p>Consultar los equipos</p>
-                      <a href="/actions/act_buscar_equipos.php" class="btn btn-primary btn-block">Abrir</a>
-                </div>
+            <!-- div de categorias -->
+            <div class="tarjeta-inicio ">
+                <h2>Categorias</h2>
+                <p>Consultar las categorias</p>
+                <a href="/actions/act_buscar_categoria.php" class="boton boton-completo">Abrir</a>
             </div>
-        </div>   
 
-        <!-- div de reportes -->
-        <div class="col-md-6 mb-3 ms-auto">
-            <div class="card">
-                <div class="card-header">
-                    reportes
-                </div>
-                <div class="card-body">
-                    <p>Consultar los reportes</p>
-                      <a href="/pages/view_reportes.php" class="btn btn-primary btn-block">Abrir</a>
-                </div>
+
+
+            <!-- div de equipos -->
+            <div class="tarjeta-inicio ">
+                <h2>equipos</h2>
+                <p>Consultar los equipos</p>
+                <a href="/actions/act_buscar_equipos.php" class="boton boton-completo">Abrir</a>
             </div>
-        </div>   
+
+
+            <!-- div de reportes -->
+            <div class="tarjeta-inicio">
+                <h2>reportes</h2>
+                <p>Consultar los reportes</p>
+                <a href="/pages/view_reportes.php" class="boton boton-completo">Abrir</a>
+            </div>
+
+        </div>
     </div>
     </div>
 
- <?php
- 
+    <?php
+
     require_once __DIR__ . '/common/footer.php';
 
 ?>
