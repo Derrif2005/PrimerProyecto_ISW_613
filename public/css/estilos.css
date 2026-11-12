@@ -1,0 +1,31 @@
+/*carga los otros archivos*/
+@import url("header.css");
+@import url("footer.css");
+@import url("body.css");
+@import url("formularios.css");
+
+.mensaje {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.mensaje-exito {
+    background-color: lightgreen;
+    color: darkgreen;
+    border-color: green;
+}
+
+.mensaje-error {
+    background-color: lightpink;
+    color: darkred;
+    border-color: red;
+}
+
+.mensaje-parcial {
+    background-color: lightyellow;
+    color: brown;
+    border-color: orange;
+}
+

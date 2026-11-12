@@ -1,0 +1,83 @@
+
+/* css para formularios  */
+
+/* Separacion de campos */
+
+.grupo-formulario {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Etiquetas */
+
+.grupo-formulario label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Campos */
+
+.grupo-formulario input,
+.grupo-formulario select,
+.grupo-formulario textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Recordarme */
+
+.grupo-recordar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+/* Boton principal */
+
+
+
+.boton {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.boton:hover {
+    background-color: #004c99;
+}
+
+/* Boton de todo el ancho */
+
+.boton-completo {
+    width: 100%;
+}
+
+/* Registro */
+
+.texto-registro {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.texto-registro a {
+    color: #0066cc;
+}
+
+.boton-eliminar{
+ background-color: #cc2200;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+
+}

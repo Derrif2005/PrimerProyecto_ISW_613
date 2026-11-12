@@ -1,0 +1,52 @@
+/*Estilos para cuerpo de la pagina*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f5f9;
+    color: #333;
+    margin: 0;
+}
+
+/* Titulos */
+
+h1, h2, h3 {
+    color: #243447;
+}
+
+/* Contenedor principal */
+
+.contenedor {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 15px;
+    text-align: center;
+}
+
+/* Tarjeta */
+
+.tarjeta {
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 25px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px #ddd;
+    text-align: left;
+}
+
+/* Titulo de la tarjeta */
+
+.tarjeta h2 {
+    text-align: center;
+}
+
+/* Enlaces */
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

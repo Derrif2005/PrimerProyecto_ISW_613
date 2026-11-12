@@ -1,0 +1,33 @@
+
+/* encazado y menu */
+
+.menu {
+    background-color: #0066cc;
+    padding: 15px;
+}
+
+/* Contenido del menu */
+
+.menu-contenido {
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Enlaces */
+
+.menu a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+/* Al pasar el mouse */
+
+.menu a:hover {
+    text-decoration: underline;
+}

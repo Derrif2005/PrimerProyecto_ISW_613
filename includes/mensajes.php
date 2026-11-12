@@ -1,35 +1,71 @@
 <?php
 
+//lista de mensajes de error y exito
 const MESSAGES = [
+
+    //mensajes de error
     'error' => [
-        'invalid_input' => 'Please fill in all the required fields correctly.',
-        'invalid_credentials' => 'Invalid username or password.',
-        'login_required' => 'You must log in to access that page.',
-        'session_expired' => 'Your session expired. Please log in again.',
-        'password_too_short' => 'The password must be at least 8 characters long.',
-        'password_mismatch' => 'The passwords do not match.',
-        'invalid_province' => 'Please select a valid province.',
-        'username_taken' => 'That username is already taken.',
-        'wrong_password' => 'The current password is incorrect.',
-        'invalid_picture' => 'The profile picture must be a JPG, PNG, GIF or WEBP image.',
-        'picture_too_large' => 'The profile picture must be 2 MB or smaller.',
-        'upload_failed' => 'The profile picture could not be uploaded. Please try again.',
-        'server_error' => 'Something went wrong. Please try again later.',
+        '1' => 'No se pudo realizar la operacion.',
+        'invalid_input' => 'Complete los datos correctamente.',
+        'invalid_credentials' => 'Correo o contraseña incorrectos.',
+        'login_required' => 'Debe iniciar sesion para continuar.',
+        'session_expired' => 'La sesion expiro. Inicie sesion nuevamente.',
+        'invalid_picture' => 'El archivo no es una imagen permitida.',
+        'picture_too_large' => 'La imagen supera el tamaño permitido.',
+        'upload_failed' => 'No se pudo guardar la imagen.',
     ],
+
+    //mnsajes de exito
     'success' => [
-        'registered' => 'Your account was created. You can now log in.',
-        'logged_out' => 'You have been logged out.',
-        'updated' => 'Your profile was updated.',
+        '1' => 'Operacion realizada correctamente.',
+        'logged_out' => 'La sesion se cerro correctamente.',
+    ],
+
+    //Mensajes cuando se crea o elimina un registro
+    'ok' => [
+        '1' => 'Operacion realizada correctamente.',
+    ],
+
+    //mensajes cuando alguna imagen falla
+    'parcial' => [
+        '1' => 'La operacion se realizo, pero algunas imagenes no se pudieron guardar.',
     ],
 ];
 
-// Renders a Bootstrap alert for a known ?error= or ?success= code in the query string
+
+//funciona para mostrar los mensajes en pantalla
 function renderAlert()
 {
-    foreach (['error' => 'danger', 'success' => 'success'] as $type => $style) {
-        $code = $_GET[$type] ?? null;
-        if (is_string($code) && isset(MESSAGES[$type][$code])) {
-            echo '<div class="alert alert-' . $style . '" role="alert">' . htmlspecialchars(MESSAGES[$type][$code]) . '</div>';
+    //recorre los tipos de mensajes disponibles
+    foreach ([
+        'error' => 'error',
+        'success' => 'exito',
+        'ok' => 'exito',
+        'parcial' => 'parcial'
+    ] as $tipo => $estilo) {
+
+        //obtiene el codigo del mensaje desde la URL
+        $codigo = $_GET[$tipo] ?? null;
+
+        //comprueba que el codigo sea texto y exista en la lista
+        if (is_string($codigo) && isset(MESSAGES[$tipo][$codigo])) {
+
+            //obtiene el mensaje correspondiente
+            $mensaje = MESSAGES[$tipo][$codigo];
+
+            //evita que se interprete codigo HTML
+            $mensaje = htmlspecialchars(
+                $mensaje,
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+
+            //muestra el mensaje con nuestro CSS
+            echo '<div class="mensaje mensaje-' . $estilo . '" role="alert">';
+
+            echo $mensaje;
+
+            echo '</div>';
         }
     }
 }
