@@ -1,13 +1,52 @@
 <?php
 
-function getEquipos(PDO $conn)
+//obtiene los equipos activos por pagina
+function getEquipos(PDO $conn, int $limite, int $offset)
 {
-    return $conn->query( 'SELECT e.id, e.categoria_id, c.nombre AS categoria, e.nombre,  e.codigo, e.active, e.imagen_ruta, e.versionn, e.eliminado_en  
+    //consulta los equipos con su respectiva categoria
+    $consulta = $conn->prepare(
+        'SELECT e.id, e.categoria_id, c.nombre AS categoria,
+                e.nombre, e.codigo, e.active, e.imagen_ruta,
+                e.versionn, e.eliminado_en
          FROM equipos e
-         LEFT JOIN categorias c ON c.id = e.categoria_id WHERE e.active = true
-         ORDER BY e.id'
-    )->fetchAll(PDO::FETCH_ASSOC);
+         LEFT JOIN categorias c ON c.id = e.categoria_id
+         WHERE e.active = true
+         ORDER BY e.id
+         LIMIT :limite OFFSET :offset'
+    );
+
+    //cantidad de equipos que se mostraran
+    $consulta->bindValue(':limite', $limite, PDO::PARAM_INT);
+
+    //cantidad de equipos que se saltaran
+    $consulta->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+    //ejecuta la consulta
+    $consulta->execute();
+
+    //devuelve los equipos encontrados
+    return $consulta->fetchAll(PDO::FETCH_ASSOC);
 }
+
+
+//cuenta la cantidad total de equipos activos
+function ContarEquipos(PDO $conn)
+{
+    //cuenta los equipos que no estan eliminados
+    $consulta = $conn->query(
+        'SELECT COUNT(*) FROM equipos WHERE active = true'
+    );
+
+    //devuelve el total como numero entero
+    return (int)$consulta->fetchColumn();
+}
+
+
+
+
+
+
+
 
 
 /**
@@ -17,7 +56,7 @@ function getEquipos(PDO $conn)
  */
 
 
-//obtiene todos los nombres 
+//obtiene las imagenes por id 
 function getImagenesEquipo(PDO $conn, $equipo_id) {
     $consulta = $conn->prepare('SELECT id FROM equipo_imagenes WHERE equipo_id = :equipo_id ORDER BY id');
     $consulta->execute(['equipo_id' => $equipo_id]);

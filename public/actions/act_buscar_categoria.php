@@ -6,6 +6,9 @@ require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/buscar_categorias.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
+//carga las funciones de cookies
+require_once __DIR__ . '/../../includes/cookies.php';
+
 
 requireLogin();
 
@@ -29,17 +32,58 @@ if (empty($_SESSION['csrf_token'])) {
         $encontrarCategoria = findcategorias($conn,trim($_GET['buscar_categoria']));
     }
 
-    //Se inicia vacia para luego ser llenada 
-    $ultimaID = 0;
-    if(isset($_GET['Cargar_id']) && is_string($_GET['Cargar_id'])){
-        //Busca la ultima id en MYSQL
-        $encontrarCategoria = findcategorias($conn,trim($_GET['Cargar_id']) + 1);
+    //obtiene el numero de pagina desde la URL
+    $pagina = $_GET['pagina'] ?? '1';
+
+//valida que la pagina sea un numero entero positivo
+    if (!is_string($pagina) || !ctype_digit($pagina) || (int)$pagina < 1) {
+        $pagina = 1;
+    } else {
+        $pagina = (int)$pagina;
     }
 
+    //obtiene la cantidad solicitada desde el formulario
+    $cantidad = $_GET['cantidad_categorias'] ?? null;
 
-//Variable para guardar todo los usuarios
-$Categorias = getCategorias($conn); 
-//Variable para mostrar el formulario de crear
-$mostrar = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
-//carga pagina para mostrar los datos del usuario
+    //obtiene la cantidad que se guardo en la cookie (10 si no hay una valida)
+    $limite = obtenerCantidadCategorias();
+
+    //comprueba que el valor recibido sea un numero valido
+    if (is_string($cantidad) && ctype_digit($cantidad)) {
+        // Convierte la cantidad a un numero entero
+        $cantidad = (int)$cantidad;
+
+        //solo permite las cantidades declaradas en cookies.php
+        if (in_array($cantidad, cantidadespermitidas, true)) {
+            //utiliza la cantidad seleccionada
+            $limite = $cantidad;
+
+            //guarda la preferencia en la cookie
+            guardarCantidadCategorias($limite);
+
+            //vuelve a la primera pagina cuando se cambia la cantidad
+            $pagina = 1;
+        }
+    }
+
+    // Obtiene el numero total de categorias activas
+    $totalCategorias = ContarCategorias($conn);
+
+    // Calcula el total de paginas y garantiza que exista por lo menos la pagina 1
+    $totalPaginas = max(1, (int)ceil($totalCategorias / $limite));
+
+    // Evita que la pagina solicitada supere la cantidad disponible
+    if ($pagina > $totalPaginas) {
+        $pagina = $totalPaginas;
+    }
+
+    // Calcula la cantidad de categorias que debemos saltar
+    $offset = ($pagina - 1) * $limite;
+
+
+    //se llena con las categorias de la pagina seleccionada
+    $Categorias = getCategorias($conn, $limite, $offset);
+    //Variable para mostrar el formulario de crear
+    $mostrar = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
+//carga pagina para mostrar los datos de la categoria
 require __DIR__ . '/../pages/view_categorias.php';

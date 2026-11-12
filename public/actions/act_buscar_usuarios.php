@@ -35,7 +35,7 @@ if (empty($_SESSION['csrf_token'])) {
     }
 
 
-//Se implementara modificacion para mostrar una cantidad n de ususario por pagina $users = getUsers($conn);
+//Se implementara modificacion para mostrar una cantidad n de ususario por pagina
 
     // Obtiene el numero de pagina desde la URL
     $pagina = $_GET['pagina'] ?? '1';

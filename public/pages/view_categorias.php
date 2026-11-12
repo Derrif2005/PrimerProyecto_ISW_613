@@ -3,6 +3,10 @@
     require_once __DIR__ . '/../../includes/buscar_categorias.php';
     require_once __DIR__ . '/../../includes/auth.php';
 
+    require_once __DIR__ . '/../../includes/cookies.php';
+
+
+
 
   // The users list is only reachable with a valid, active session
   requireLogin();
@@ -26,6 +30,24 @@ validarAdmin($conn);
             <p class="lead">Lista de Categorias</p>
             <hr class="my-4">
         </div>
+
+        <form action="/actions/act_buscar_categoria.php" method="GET">
+            <label for="cantidad_categorias">Cantidad de categorias a escoger</label>
+            <select class="form-control mr-2" style="width: 90px;" name="cantidad_categorias" id="cantidad_categorias">
+
+                <?php foreach (cantidadespermitidas as $opcion): ?>
+
+                <option value="<?= (int)$opcion ?>" <?= (int)$limite === (int)$opcion ? 'selected' : '' ?>>
+                    <?= (int)$opcion ?>
+                </option>
+
+                <?php endforeach; ?>
+
+            </select>
+            <button type="submit" class="btn btn-primary mt-2 ">Seleccionar</button>
+        </form>
+
+
         <?php /*btn para mostrar el formulario de crear*/ ?>
         <a href="/actions/act_buscar_categoria.php?nuevo=1" class="btn btn-primary mb-3">Nueva categoria</a>
         
@@ -73,9 +95,37 @@ validarAdmin($conn);
 
             </tbody>
         </table>
+            
+        <div class="d-flex justify-content-center align-items-center mt-3">
+
+            <?php /*Comprueba que no estamos en la primera pagina*/ ?>
+            <?php if ($pagina > 1): ?>
+
+            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina - 1 ?>" class="btn btn-primary mr-2">
+                Anterior
+            </a>
+
+            <?php endif; ?>
+
+            <?php /*Muestra la pagina actual y el total*/ ?>
+            <span class="mr-2">
+                Pagina <?= $pagina ?> de <?= $totalPaginas ?>
+            </span>
+
+            <?php /*Comprueba que todavia existen mas paginas*/ ?>
+            <?php if ($pagina < $totalPaginas): ?>
+
+            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina + 1 ?>" class="btn btn-primary">
+                Siguiente
+            </a>
+
+            <?php endif; ?>
+        </div>
+
+
     </div>
 
-    <?php /*Parte de label para modificar los usuarios*/ ?>
+    <?php /*Parte de label para modificar los categorias*/ ?>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">

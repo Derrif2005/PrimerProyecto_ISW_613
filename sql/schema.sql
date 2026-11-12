@@ -94,9 +94,32 @@ create table equipos(
     foreign key (categoria_id) references categorias(id) on delete cascade
 );
 
-insert into equipos (categoria_id, nombre, codigo) values
-(1, 'Laptop Dell inspiron 15', '801580');
-
+INSERT INTO equipos (categoria_id, nombre, codigo) VALUES
+(1, 'Laptop HP ProBook 450 G9', '801581'),
+(1, 'Laptop Lenovo ThinkPad E14', '801582'),
+(1, 'Laptop ASUS VivoBook 15', '801583'),
+(1, 'Laptop Acer Aspire 5', '801584'),
+(1, 'Laptop Dell Latitude 5420', '801585'),
+(1, 'Laptop HP EliteBook 840 G8', '801586'),
+(1, 'Laptop Lenovo IdeaPad 3', '801587'),
+(1, 'Laptop ASUS ExpertBook B1', '801588'),
+(1, 'Laptop Dell Vostro 3510', '801589'),
+(1, 'Laptop Acer TravelMate P2', '801590'),
+(1, 'Laptop MSI Modern 15', '801591'),
+(1, 'Laptop HP Pavilion 15', '801592'),
+(1, 'Laptop Lenovo ThinkBook 15', '801593'),
+(1, 'Laptop Dell Inspiron 14', '801594'),
+(1, 'Laptop ASUS ZenBook 14', '801595'),
+(1, 'Laptop Acer Swift 3', '801596'),
+(1, 'Laptop HP Victus 15', '801597'),
+(1, 'Laptop Lenovo Legion 5', '801598'),
+(1, 'Laptop ASUS TUF Gaming A15', '801599'),
+(1, 'Laptop Dell G15 Gaming', '801600'),
+(1, 'Laptop MSI Katana 15', '801601'),
+(1, 'Laptop HP Omen 16', '801602'),
+(1, 'Laptop Lenovo LOQ 15', '801603'),
+(1, 'Laptop ASUS ROG Strix G16', '801604'),
+(1, 'Laptop Acer Nitro V15', '801605');
 
 -- tabla para almacenar varias imagenes
 create table equipo_imagenes(

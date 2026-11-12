@@ -26,6 +26,22 @@ validarPermiso($conn, 'equipos_ver');
             <hr class="my-4">
         </div>
 
+        <form action="/actions/act_buscar_equipos.php" method="GET">
+            <label for="cantidad_equipos">Cantidad de equipos a escoger</label>
+            <select class="form-control mr-2" style="width: 90px;" name="cantidad_equipos" id="cantidad_equipos">
+
+                <?php foreach (cantidadespermitidas as $opcion): ?>
+
+                <option value="<?= (int)$opcion ?>" <?= (int)$limite === (int)$opcion ? 'selected' : '' ?>>
+                    <?= (int)$opcion ?>
+                </option>
+
+                <?php endforeach; ?>
+
+            </select>
+            <button type="submit" class="btn btn-primary mt-2 ">Seleccionar</button>
+        </form>
+
         <?php /*btn para mostrar el formulario de crear*/ ?>
         <a href="/actions/act_buscar_equipos.php?nuevo=1" class="btn btn-primary mb-3">Nuevo equipo</a>
 
@@ -104,6 +120,34 @@ validarPermiso($conn, 'equipos_ver');
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+    
+        <div class="d-flex justify-content-center align-items-center mt-3">
+
+            <?php /*Comprueba que no estamos en la primera pagina*/ ?>
+            <?php if ($pagina > 1): ?>
+
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>" class="btn btn-primary mr-2">
+                Anterior
+            </a>
+
+            <?php endif; ?>
+
+            <?php /*Muestra la pagina actual y el total*/ ?>
+            <span class="mr-2">
+                Pagina <?= $pagina ?> de <?= $totalPaginas ?>
+            </span>
+
+            <?php /*Comprueba que todavia existen mas paginas*/ ?>
+            <?php if ($pagina < $totalPaginas): ?>
+
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>" class="btn btn-primary">
+                Siguiente
+            </a>
+
+            <?php endif; ?>
+        </div>
+
     </div>
 
     <?php /*Parte de label para modificar los usuarios*/ ?>
