@@ -1,7 +1,8 @@
 <?php   
     require_once __DIR__ . '/pages/common/header.php';
     require_once __DIR__ . '/../includes/auth.php';
-    $rememberedUsername = $_COOKIE['remembered_username'] ?? '';
+    // Obtiene el correo guardado en la cookie
+    $correoRecordado = $_COOKIE['remembered_username'] ?? '';
 ?>
 
 <body>
@@ -29,7 +30,7 @@
                         <form action="actions/login.php" method="POST">
                             <div class="form-group">
                                 <label for="correo">correo</label>
-                                <input type="email" class="form-control" id="correo" name="correo" required>
+                                <input type="email" class="form-control" id="correo" name="correo" value="<?=htmlspecialchars($correoRecordado, ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
@@ -38,7 +39,7 @@
 
                             <?php/*pendiente de revisar*/?>
                             <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" <?php echo $rememberedUsername !== '' ? 'checked' : ''; ?>>
+                                <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" <?php echo $correoRecordado !== '' ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="remember_me">Recuerdame</label>
                             </div>
 

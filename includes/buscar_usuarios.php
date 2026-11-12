@@ -29,7 +29,7 @@ function getUsers(PDO $conn, int $limite, int $offset)
 function ContarUsuarios(PDO $conn){
 
     //La consulta contara la cantidad de usuarios activos y los llenara en el $consulta
-    $consulta = $conn->query('SELECT COUNT(*) FROM usuarios  WHERE u.active = true')
+    $consulta = $conn->query('SELECT COUNT(*) FROM usuarios  WHERE active = true');
     //Retornara un entero con la cantidad de usuarios 
     return (int)$consulta->fetchColumn();
 }

@@ -63,9 +63,9 @@ function requireLogin()
 
 
 //Recuerda el usuario
-function rememberUsername($username)
+function rememberUsername($user)
 {
-    setcookie(REMEMBER_COOKIE, $username, [
+    setcookie(REMEMBER_COOKIE, $user, [
         'expires' => time() + 60 * 60 * 24 * 30,
         'path' => '/',
         'httponly' => true,
@@ -90,24 +90,16 @@ function forgetUsername()
 
     function validarAdmin(PDO $conn)
     {
-        startSession();
-        //Validad que el usuario administrador este activo
-        $consulta = $conn->prepare('SELECT id_rol, active FROM usuarios WHERE id =:id LIMIT 1');
-        $consulta -> execute(['id' => $_SESSION['user_id']]);
-        $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
-        // Si el usuario es false entonces cancela proceso o si es diferente a 1 lo cancela y si es no esta activo tambie lo canceala
-        if($usuario === false || (int)$usuario['id_rol'] !== 1 || (int)$usuario['active'] !== 1)
-        {
-         http_response_code(403);
-        exit('No tiene permisos para actualizar usuarios');
-        } 
+
     // Revisa que el usuario este logueado 
     requireLogin();
         
     try{
     //Validad que el usuario administrador este activo
     $consulta = $conn->prepare('SELECT id_rol, active FROM usuarios WHERE id =:id LIMIT 1');
+    //Ejecuta la consulta
     $consulta -> execute(['id' => $_SESSION['user_id']]);
+    // Obitne los datos del usurio encontrado
     $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
     // Si el usuario es false entonces cancela proceso o si es diferente a 1 lo cancela y si es no esta activo tambie lo canceala
     if($usuario === false || (int)$usuario['id_rol'] !== 1 || (int)$usuario['active'] !== 1)
@@ -141,6 +133,9 @@ function validarRol(PDO $conn, $id_rol) {
 
 //Comprueba si el usuario tiene permiso para realizar una accion
 function validarPermiso(PDO $conn, $permiso) {
+
+    //Comprueba que el usuario tenga una sesion valida
+    requireLogin();
 
     //Obtiene el ID del usuario que inicio sesion
     $usuario_id = $_SESSION['user_id'] ?? null;

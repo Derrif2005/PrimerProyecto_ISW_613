@@ -26,6 +26,15 @@
             <hr class="my-4">
         </div>
 
+        <form action="/actions/act_buscar_usuarios.php" method="GET"> 
+            <label for="cantidad_usuarios">Cantidad de usuarios a escoger</label>
+            <input type="number"  class="form-control mr-2" style="width: 90px;" name="cantidad_usuarios" id="cantidad_usuarios" 
+             min="1" max="100" value="<?= (int)$limite ?>" required >
+            <button type="submit"  class="btn btn-primary mt-2 ">Seleccionar</button>
+        </form>  
+            
+
+
         <?php /*btn para mostrar el formulario de crear*/ ?>
         <a href="/actions/act_buscar_usuarios.php?nuevo=1" class="btn btn-primary mb-3">Nuevo usuario</a>
             
