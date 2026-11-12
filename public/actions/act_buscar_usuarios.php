@@ -59,14 +59,17 @@ if (empty($_SESSION['csrf_token'])) {
         // Convierte la cantidad a un numero entero
         $cantidad = (int)$cantidad;
 
-        // Comprueba que la cantidad este entre 1 y 100
-        if ($cantidad >= 1 && $cantidad <= 100) {
+        //comprueba que la cantidad este en la lista permitida
+        if (in_array($cantidad, cantidadespermitidas, true)) {
 
             // Guarda la cantidad seleccionada en la variable limite
             $limite = $cantidad;
 
              // Guarda la cantidad seleccionada en la cookie
         guardarCantidadUsuarios($limite);
+
+         //regresa a la primera pagina al cambiar la cantidad
+        $pagina = 1;
         }
     }
 
@@ -75,6 +78,16 @@ if (empty($_SESSION['csrf_token'])) {
 
     //calcula la cantidad de paginas necesarias
     $totalPaginas = (int)ceil($totalUsuarios / $limite);
+
+    // Comprueba que exista por lo menos la pagina 1
+    if ($totalPaginas < 1) {
+        $totalPaginas = 1;
+    }
+
+    // Comprueba que la pagina solicitada no supere las disponibles
+    if ($pagina > $totalPaginas) {
+        $pagina = $totalPaginas;
+    }
 
     // Calcula cuantos usuarios debemos saltar
     $offset = ($pagina - 1) * $limite;

@@ -26,18 +26,27 @@
             <hr class="my-4">
         </div>
 
-        <form action="/actions/act_buscar_usuarios.php" method="GET"> 
+        <form action="/actions/act_buscar_usuarios.php" method="GET">
             <label for="cantidad_usuarios">Cantidad de usuarios a escoger</label>
-            <input type="number"  class="form-control mr-2" style="width: 90px;" name="cantidad_usuarios" id="cantidad_usuarios" 
-             min="1" max="100" value="<?= (int)$limite ?>" required >
-            <button type="submit"  class="btn btn-primary mt-2 ">Seleccionar</button>
-        </form>  
-            
+            <select class="form-control mr-2" style="width: 90px;" name="cantidad_usuarios" id="cantidad_usuarios">
+
+                <?php foreach (cantidadespermitidas as $opcion): ?>
+
+                <option value="<?= (int)$opcion ?>" <?= (int)$limite === (int)$opcion ? 'selected' : '' ?>>
+                    <?= (int)$opcion ?>
+                </option>
+
+                <?php endforeach; ?>
+
+            </select>
+            <button type="submit" class="btn btn-primary mt-2 ">Seleccionar</button>
+        </form>
+
 
 
         <?php /*btn para mostrar el formulario de crear*/ ?>
         <a href="/actions/act_buscar_usuarios.php?nuevo=1" class="btn btn-primary mb-3">Nuevo usuario</a>
-            
+
         <table class="table">
             <thead>
                 <tr>
@@ -65,23 +74,53 @@
              ?>
                     </td>
                     <td>
-                    <?php /*este codigo se puede utilizar*/ ?> 
-                        <a href="/actions/act_buscar_usuarios.php?buscar_correo=<?php echo urlencode($user['correo']); ?>" class="btn btn-warning btn-sm">
+                        <?php /*este codigo se puede utilizar*/ ?>
+                        <a href="/actions/act_buscar_usuarios.php?buscar_correo=<?php echo urlencode($user['correo']); ?>"
+                            class="btn btn-warning btn-sm">
                             Editar
                         </a>
-                        <form action="/actions/act_usuarios.php" method="POST" class="d-inline" onsubmit="return confirm('Desea eliminar el usuario puede producir un desastre en la base de datos')">
-                    
+                        <form action="/actions/act_usuarios.php" method="POST" class="d-inline"
+                            onsubmit="return confirm('Desea eliminar el usuario puede producir un desastre en la base de datos')">
+
                             <input type="hidden" name="accion" value="eliminar">
                             <input type="hidden" name="id" value="<?php echo (int)$user['id']; ?>">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
-                            
+                            <input type="hidden" name="csrf_token"
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');?>">
+
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
-                        </td>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center align-items-center mt-3">
+
+            <?php /*Comprueba que no estamos en la primera pagina*/ ?>
+            <?php if ($pagina > 1): ?>
+
+            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina - 1 ?>" class="btn btn-primary mr-2">
+                Anterior
+            </a>
+
+            <?php endif; ?>
+
+            <?php /*Muestra la pagina actual y el total*/ ?>
+            <span class="mr-2">
+                Pagina <?= $pagina ?> de <?= $totalPaginas ?>
+            </span>
+
+            <?php /*Comprueba que todavia existen mas paginas*/ ?>
+            <?php if ($pagina < $totalPaginas): ?>
+
+            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina + 1 ?>" class="btn btn-primary">
+                Siguiente
+            </a>
+
+            <?php endif; ?>
+        </div>
+
     </div>
 
     <?php /*Parte de label para modificar los usuarios*/ ?>
