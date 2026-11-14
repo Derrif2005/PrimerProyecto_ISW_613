@@ -35,7 +35,21 @@ if (empty($_SESSION['csrf_token'])) {
     }
 
 
+    //obtiene el nombre que se desea buscar en la tabla
+    $filtro = $_GET['filtro'] ?? '';
+
+        //comprueba que el filtro sea texto
+        if (!is_string($filtro)) {
+            $filtro = '';
+        }
+
+        //elimina espacios y limita la longitud
+        $filtro = trim($filtro);
+        $filtro = substr($filtro, 0, 100);
+
 //Se implementara modificacion para mostrar una cantidad n de ususario por pagina
+
+
 
     // Obtiene el numero de pagina desde la URL
     $pagina = $_GET['pagina'] ?? '1';
@@ -93,7 +107,7 @@ if (empty($_SESSION['csrf_token'])) {
     $offset = ($pagina - 1) * $limite;
 
     // Obtiene los usuarios de la pagina seleccionada
-    $users = getUsers($conn, $limite, $offset);
+    $users = getUsers($conn, $limite, $offset, $filtro);
 
 
 

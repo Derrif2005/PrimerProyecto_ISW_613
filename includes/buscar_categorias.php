@@ -2,15 +2,17 @@
 
 
 //obtiene todos las categorias y si hay uno false no lo agrega ala lista
-function getCategorias(PDO $conn, int $limite, int $offset)
+function getCategorias(PDO $conn, int $limite, int $offset, string $filtro = '')
 {
     $consulta = $conn->prepare(
-            'SELECT id, nombre, dias_max_prestamo, active
-                FROM categorias
-                WHERE active = true
-               ORDER BY id
-                 LIMIT :limite OFFSET :offset'
+            'SELECT id, nombre, dias_max_prestamo, active FROM categorias
+            WHERE active = true AND nombre LIKE :filtro
+            ORDER BY id LIMIT :limite OFFSET :offset'
         );
+
+        //nombre de la categoria que se desea buscar
+        $consulta->bindValue(':filtro', '%' . $filtro . '%');
+
 
         //cantidad de categorias que se mostraran
         $consulta->bindValue(':limite', $limite, PDO::PARAM_INT);
@@ -26,10 +28,16 @@ function getCategorias(PDO $conn, int $limite, int $offset)
 }
 
  //cuenta la cantidad total de categorias activas
-    function ContarCategorias(PDO $conn)
+    function ContarCategorias(PDO $conn, string $filtro = '')
     {
         //cuenta las categorias que no estan eliminadas
-        $consulta = $conn->query('SELECT COUNT(*) FROM categorias WHERE active = true');
+        $consulta = $conn->prepare('SELECT COUNT(*) FROM categorias WHERE active = true AND nombre LIKE :filtro');
+
+        //nombre de la categoria que se desea buscar
+        $consulta->bindValue(':filtro', '%' . $filtro . '%');
+
+        //ejecuta la consulta
+        $consulta->execute();
 
         //devuelve el total como numero entero
         return (int)$consulta->fetchColumn();

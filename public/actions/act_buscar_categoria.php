@@ -32,6 +32,20 @@ if (empty($_SESSION['csrf_token'])) {
         $encontrarCategoria = findcategorias($conn,trim($_GET['buscar_categoria']));
     }
 
+    //obtiene el nombre que se desea buscar en la tabla
+    $filtro = $_GET['filtro'] ?? '';
+
+    //comprueba que el filtro sea texto
+    if (!is_string($filtro)) {
+        $filtro = '';
+    }
+
+    //elimina los espacios y limita la longitud
+    $filtro = trim($filtro);
+    $filtro = substr($filtro, 0, 100);
+
+
+
     //obtiene el numero de pagina desde la URL
     $pagina = $_GET['pagina'] ?? '1';
 
@@ -82,8 +96,8 @@ if (empty($_SESSION['csrf_token'])) {
 
 
     //se llena con las categorias de la pagina seleccionada
-    $Categorias = getCategorias($conn, $limite, $offset);
+    $Categorias = getCategorias($conn, $limite, $offset, $filtro);
     //Variable para mostrar el formulario de crear
     $mostrar = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos de la categoria
-require __DIR__ . '/../pages/view_categorias.php';
+require __DIR__ . '/../pages/view_categorias.php'; 

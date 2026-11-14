@@ -26,6 +26,17 @@
         <p>Lista de categorías</p>
         <hr>
 
+         <!-- Buscar registros dentro de la tabla -->
+        <form action="/actions/act_buscar_categoria.php" method="GET">
+            <div class="grupo-formulario">
+                <label for="filtro">Buscar equipos por nombre</label>
+                <input type="text" id="filtro" name="filtro"
+                    value="<?= htmlspecialchars($filtro, ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+            <button type="submit" class="boton">Buscar en la tabla</button>
+            <a href="/actions/act_buscar_categoria.php" class="boton">Mostrar todos</a>
+        </form>
+
         <!-- Seleccionar cantidad de categorias -->
         <form action="/actions/act_buscar_categoria.php" method="GET">
 

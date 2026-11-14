@@ -1,19 +1,17 @@
 <?php
 
 //obtiene los equipos activos por pagina
-function getEquipos(PDO $conn, int $limite, int $offset)
+function getEquipos(PDO $conn, int $limite, int $offset, string $filtro = '')
 {
     //consulta los equipos con su respectiva categoria
     $consulta = $conn->prepare(
-        'SELECT e.id, e.categoria_id, c.nombre AS categoria,
-                e.nombre, e.codigo, e.active, e.imagen_ruta,
-                e.versionn, e.eliminado_en
-         FROM equipos e
-         LEFT JOIN categorias c ON c.id = e.categoria_id
-         WHERE e.active = true
-         ORDER BY e.id
-         LIMIT :limite OFFSET :offset'
+        'SELECT e.id, e.categoria_id, c.nombre AS categoria, e.nombre, e.codigo, e.active, e.imagen_ruta, e.versionn, e.eliminado_en
+         FROM equipos e LEFT JOIN categorias c ON c.id = e.categoria_id WHERE e.active = true
+         AND e.nombre LIKE :filtro ORDER BY e.id LIMIT :limite OFFSET :offset'
     );
+
+    //nombre del equipo que se desea buscar
+    $consulta->bindValue(':filtro', '%' . $filtro . '%');
 
     //cantidad de equipos que se mostraran
     $consulta->bindValue(':limite', $limite, PDO::PARAM_INT);
@@ -30,30 +28,22 @@ function getEquipos(PDO $conn, int $limite, int $offset)
 
 
 //cuenta la cantidad total de equipos activos
-function ContarEquipos(PDO $conn)
+function ContarEquipos(PDO $conn, string $filtro = '')
 {
     //cuenta los equipos que no estan eliminados
-    $consulta = $conn->query(
-        'SELECT COUNT(*) FROM equipos WHERE active = true'
+    $consulta = $conn->prepare(
+        'SELECT COUNT(*) FROM equipos WHERE active = true  AND nombre LIKE :filtro'
     );
+
+     //nombre del equipo que se desea buscar
+    $consulta->bindValue(':filtro', '%' . $filtro . '%');
+
+    //ejecuta la consulta
+    $consulta->execute();
 
     //devuelve el total como numero entero
     return (int)$consulta->fetchColumn();
 }
-
-
-
-
-
-
-
-
-
-/**
- * Returns an array of all provinces, each with 'id' and 'name' keys
- * @param PDO $conn The database connection
- * @return array An array of associative arrays, each representing a province
- */
 
 
 //obtiene las imagenes por id 
@@ -62,14 +52,6 @@ function getImagenesEquipo(PDO $conn, $equipo_id) {
     $consulta->execute(['equipo_id' => $equipo_id]);
     return $consulta->fetchAll(PDO::FETCH_ASSOC);
 }
-
-/* 
- * Finds a province by its ID
- * @param PDO $conn The database connection
- * @param int $provinceId The ID of the province to find
- * @return array|null An associative array with 'id' and 'name' keys if found, or null if not found
- */
-
 
 
 

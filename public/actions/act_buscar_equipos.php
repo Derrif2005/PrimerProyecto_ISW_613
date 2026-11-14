@@ -32,6 +32,19 @@ if (empty($_SESSION['csrf_token'])) {
         $encontrarEquipo = findNombresEquipos($conn,trim($_GET['buscar_equipo']));
     }
 
+    //obtiene el nombre que se desea buscar en la tabla
+    $filtro = $_GET['filtro'] ?? '';
+
+    //comprueba que el filtro sea texto
+    if (!is_string($filtro)) {
+        $filtro = '';
+    }
+
+    //elimina los espacios y limita la longitud
+    $filtro = trim($filtro);
+    $filtro = substr($filtro, 0, 100);
+
+
 //obtiene el numero de pagina desde la URL
 $pagina = $_GET['pagina'] ?? '1';
 
@@ -75,7 +88,7 @@ if (is_string($cantidad) && ctype_digit($cantidad)) {
 
 
         //cuenta la cantidad total de equipos activos
-        $totalEquipos = ContarEquipos($conn);
+        $totalEquipos = ContarEquipos($conn, $filtro);
 
         //calcula el numero total de paginas
         $totalPaginas = max(1, (int)ceil($totalEquipos / $limite));
@@ -90,7 +103,7 @@ if (is_string($cantidad) && ctype_digit($cantidad)) {
         $offset = ($pagina - 1) * $limite;
 
         //obtiene los equipos de la pagina seleccionada
-        $Equipos = getEquipos($conn, $limite, $offset);
+        $Equipos = getEquipos($conn, $limite, $offset, $filtro);
 
             
 

@@ -27,6 +27,22 @@
         <p>Lista de usuarios</p>
         <hr>
 
+         <form action="/actions/act_buscar_usuarios.php" method="GET">
+
+            <div class="grupo-formulario">
+                <label for="filtro">Buscar usuarios por nombre</label>
+
+                <input type="text" id="filtro" name="filtro" maxlength="100"
+                    value="<?= htmlspecialchars($filtro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+            </div>
+
+            <button type="submit" class="boton">Buscar en la tabla</button>
+
+            <a href="/actions/act_buscar_usuarios.php" class="boton">Mostrar todos</a>
+
+        </form>
+
+
         <!-- Seleccionar cantidad de usuarios -->
         <form action="/actions/act_buscar_usuarios.php" method="GET">
 

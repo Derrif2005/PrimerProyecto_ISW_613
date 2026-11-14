@@ -50,6 +50,17 @@
 
         </form>
 
+        <!-- Buscar registros dentro de la tabla -->
+        <form action="/actions/act_buscar_equipos.php" method="GET">
+            <div class="grupo-formulario">
+                <label for="filtro">Buscar equipos por nombre</label>
+                <input type="text" id="filtro" name="filtro"
+                    value="<?= htmlspecialchars($filtro, ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+            <button type="submit" class="boton">Buscar en la tabla</button>
+            <a href="/actions/act_buscar_equipos.php" class="boton">Mostrar todos</a>
+        </form>
+
         <br>
 
         <!-- Boton para crear equipo -->
@@ -81,18 +92,9 @@
                 <tr>
 
                     <td><?php echo (int)$equipo['id']; ?></td>
-
-                    <td>
-                        <?php echo htmlspecialchars($equipo['categoria'] ?? 'Sin categoría'); ?>
-                    </td>
-
-                    <td>
-                        <?php echo htmlspecialchars($equipo['nombre']); ?>
-                    </td>
-
-                    <td>
-                        <?php echo htmlspecialchars($equipo['codigo']); ?>
-                    </td>
+                    <td><?php echo htmlspecialchars($equipo['categoria'] ?? 'Sin categoría'); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['codigo']); ?></td>
 
                     <td>
                         <?php
@@ -139,7 +141,7 @@
 
                     <td>
 
-                        <!-- Editar equipo -->
+                        <?php /*editar*/?>
                         <a href="/actions/act_buscar_equipos.php?buscar_equipo=<?php echo urlencode($equipo['nombre']); ?>"
                             class="boton boton-editar">
                             Editar
@@ -178,22 +180,16 @@
             <?php /* Comprobar que no estamos en la primera pagina */ ?>
             <?php if ($pagina > 1): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>" class="boton">
-                Anterior
-            </a>
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>" class="boton">Anterior</a>
 
             <?php endif; ?>
 
-            <span>
-                Página <?= $pagina ?> de <?= $totalPaginas ?>
-            </span>
+            <span>Página <?= $pagina ?> de <?= $totalPaginas ?></span>
 
             <?php /* Comprobar si existen mas paginas */ ?>
             <?php if ($pagina < $totalPaginas): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>" class="boton">
-                Siguiente
-            </a>
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>" class="boton">Siguiente</a>
 
             <?php endif; ?>
 
