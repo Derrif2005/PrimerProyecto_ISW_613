@@ -10,7 +10,6 @@ require_once __DIR__ . '/../../includes/auth.php';
  require_once __DIR__ . '/common/header.php';
 
 
-
 ?>
 
 <body>
@@ -52,6 +51,14 @@ require_once __DIR__ . '/../../includes/auth.php';
                 <p>Consultar los reportes</p>
                 <a href="/pages/view_reportes.php" class="boton boton-completo">Abrir</a>
             </div>
+
+            <!-- div de prestamos -->
+            <div class="tarjeta-inicio">
+                <h2>Prestamos</h2>
+                <p>Consultar los Prestamos</p>
+                <a href="/pages/view_prestamo.php" class="boton boton-completo">Abrir</a>
+            </div>
+
 
         </div>
     </div>

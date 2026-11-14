@@ -88,8 +88,7 @@ function forgetUsername()
 
 //se agrega la funcion de verificar el rol de usuario ya que durante el desarollo del programa se repite mucho ese codigo
 
-    function validarAdmin(PDO $conn)
-    {
+    function validarAdmin(PDO $conn){
 
     // Revisa que el usuario este logueado 
     requireLogin();
@@ -112,9 +111,10 @@ function forgetUsername()
         http_response_code(500);
         exit('No se pudieron comprobar los permisos');
     }
-    
-
     }
+
+   
+    
     
 //Valida si el rol existe
 function validarRol(PDO $conn, $id_rol) {
@@ -128,6 +128,7 @@ function validarRol(PDO $conn, $id_rol) {
         exit;
     }
 }
+
 
 
 
