@@ -4,6 +4,9 @@
     require_once __DIR__ . '/../../includes/auth.php';
     require_once __DIR__ . '/../../includes/buscar_categorias.php';
 
+    require_once __DIR__ . '/../../includes/mensajes.php';
+
+
     // Verificar que el usuario tenga permiso
     requireLogin();
 
@@ -24,6 +27,7 @@
     <div class="contenedor">
 
         <h1>Usuarios</h1>
+        <?php renderAlert(); ?>
         <p>Lista de usuarios</p>
         <hr>
 
@@ -45,6 +49,8 @@
 
         <!-- Seleccionar cantidad de usuarios -->
         <form action="/actions/act_buscar_usuarios.php" method="GET">
+            <input type="hidden" name="filtro"
+                value="<?= htmlspecialchars($filtro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
             <div class="grupo-formulario">
                 <label for="cantidad_usuarios">Cantidad de usuarios a escoger</label>
@@ -152,8 +158,8 @@
             <?php /* Comprobar que no estamos en la primera pagina */ ?>
             <?php if ($pagina > 1): ?>
 
-            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina - 1 ?>" class="boton">
-                Anterior
+            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina - 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton">
+             Anterior
             </a>
 
             <?php endif; ?>
@@ -165,7 +171,7 @@
             <?php /* Comprobar si existen mas paginas */ ?>
             <?php if ($pagina < $totalPaginas): ?>
 
-            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina + 1 ?>" class="boton">
+            <a href="/actions/act_buscar_usuarios.php?pagina=<?= $pagina + 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton">>
                 Siguiente
             </a>
 

@@ -86,8 +86,16 @@ $accion = $_POST['accion'] ?? '';
     header('Location: /actions/act_buscar_categoria.php?success=1');
     exit;
     } catch(PDOException $error){
-    // Registrara el error sin mostralos en la vista
+
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+        header('Location: /actions/act_buscar_categoria.php?error=categoria_duplicada');
+        exit;
+    }
+
+    //registra el error
     error_log('Error de actualizacion'.$error->getMessage());
+
     header('Location: /actions/act_buscar_categoria.php?error=1');
     exit;
     }
@@ -119,11 +127,12 @@ $accion = $_POST['accion'] ?? '';
     //Vuelve al formulario mostrando un mesaje de exito
     header('Location: /actions/act_buscar_categoria.php?ok=1');
     exit;
-} catch(PDOException $error){
-    // Registrara el error son mostralos en la vista
-    error_log('Error de registro'.$error->getMessage());
-    header('Location: /actions/act_buscar_categoria.php?error=1');
+    } catch(PDOException $error){
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+    header('Location: /actions/act_buscar_categoria.php?error=categoria_duplicada');
     exit;
+    }
     }
 
 

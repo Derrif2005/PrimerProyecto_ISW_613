@@ -33,3 +33,6 @@ nbproject/private/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Imagenes subidas por los usuarios
+/storage/equipos/*

@@ -13,6 +13,10 @@ const MESSAGES = [
         'invalid_picture' => 'El archivo no es una imagen permitida.',
         'picture_too_large' => 'La imagen supera el tamaño permitido.',
         'upload_failed' => 'No se pudo guardar la imagen.',
+        'codigo_duplicado' => 'Ya existe un equipo con ese codigo.',
+        'correo_duplicado' => 'Ese correo ya esta registrado.',
+        'categoria_duplicada' => 'Ya existe una categoria con ese nombre.',
+        'prestamo' => 'prestamo no valido',
     ],
 
     //mnsajes de exito

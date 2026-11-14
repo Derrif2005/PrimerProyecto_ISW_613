@@ -91,8 +91,16 @@ validarAdmin($conn);
 
 
     } catch(PDOException $error){
-    // Registrara el error sin mostralos en la vista
-    error_log('Error de actualizacion'.$error->getMessage());
+
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+        header('Location: /actions/act_buscar_usuarios.php?error=correo_duplicado');
+        exit;
+    }
+
+    //registra el error sin mostrarlo al usuario
+    error_log('Error de actualizacion: ' . $error->getMessage());
+
     header('Location: /actions/act_buscar_usuarios.php?error=1');
     exit;
     }
@@ -130,10 +138,18 @@ validarAdmin($conn);
         header('Location: /actions/act_buscar_usuarios.php?ok=1');
         exit;
     } catch(PDOException $error){
-        // Registrara el error son mostralos en la vista
-        error_log('Error de registro'.$error->getMessage());
-        header('Location: /actions/act_buscar_usuarios.php?error=1');
+
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+        header('Location: /actions/act_buscar_usuarios.php?error=correo_duplicado');
         exit;
+    }
+
+    //registra el error sin mostrarlo al usuario
+    error_log('Error de registro: ' . $error->getMessage());
+
+    header('Location: /actions/act_buscar_usuarios.php?error=1');
+    exit;
     }
 
     } elseif($accion === 'eliminar'){
@@ -156,7 +172,7 @@ validarAdmin($conn);
 
         //Al terminar borra el codigo para generar uno nuevo al recargar
         unset($_SESSION['csrf_token']);
-    //Vuelve al formulario mostrando un mesaje de exito
+        //Vuelve al formulario mostrando un mesaje de exito
         header('Location: /actions/act_buscar_usuarios.php?ok=1');
         exit;
 

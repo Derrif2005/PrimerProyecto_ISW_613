@@ -4,6 +4,8 @@
     require_once __DIR__ . '/../../includes/auth.php';
     require_once __DIR__ . '/../../includes/cookies.php';
 
+
+    require_once __DIR__ . '/../../includes/mensajes.php';
     // Verificar que el usuario haya iniciado sesion
     requireLogin();
 
@@ -23,6 +25,7 @@
     <div class="contenedor">
 
         <h1>Categorías</h1>
+        
         <p>Lista de categorías</p>
         <hr>
 
@@ -37,8 +40,13 @@
             <a href="/actions/act_buscar_categoria.php" class="boton">Mostrar todos</a>
         </form>
 
-        <!-- Seleccionar cantidad de categorias -->
-        <form action="/actions/act_buscar_categoria.php" method="GET">
+            <!-- Seleccionar cantidad de categorias -->
+            <form action="/actions/act_buscar_categoria.php" method="GET">
+
+             <!--conserva el filtro de busqueda-->
+            <input type="hidden" name="filtro"
+            value="<?= htmlspecialchars($filtro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+
 
             <div class="grupo-formulario">
                 <label for="cantidad_categorias">Cantidad de categorías a escoger</label>
@@ -149,7 +157,7 @@
             <?php /* Comprobar que no estamos en la primera pagina */ ?>
             <?php if ($pagina > 1): ?>
 
-            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina - 1 ?>" class="boton">
+            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina - 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton"">
                 Anterior
             </a>
 
@@ -162,8 +170,8 @@
             <?php /* Comprobar si existen mas paginas */ ?>
             <?php if ($pagina < $totalPaginas): ?>
 
-            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina + 1 ?>" class="boton">
-                Siguiente
+            <a href="/actions/act_buscar_categoria.php?pagina=<?= $pagina + 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton">
+             Siguiente
             </a>
 
             <?php endif; ?>

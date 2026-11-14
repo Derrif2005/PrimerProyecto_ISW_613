@@ -3,6 +3,8 @@
     require_once __DIR__ . '/../../includes/buscar_equipos.php';
     require_once __DIR__ . '/../../includes/auth.php';
 
+    require_once __DIR__ . '/../../includes/mensajes.php';
+
     // Verificar que el usuario haya iniciado sesion
     requireLogin();
 
@@ -22,11 +24,14 @@
     <div class="contenedor">
 
         <h1>Equipos</h1>
+        <?php renderAlert(); ?>
         <p>Lista de equipos</p>
         <hr>
 
         <!-- Seleccionar cantidad de equipos -->
         <form action="/actions/act_buscar_equipos.php" method="GET">
+
+
 
             <div class="grupo-formulario">
                 <label for="cantidad_equipos">Cantidad de equipos a escoger</label>
@@ -180,7 +185,7 @@
             <?php /* Comprobar que no estamos en la primera pagina */ ?>
             <?php if ($pagina > 1): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>" class="boton">Anterior</a>
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton"">Anterior</a>
 
             <?php endif; ?>
 
@@ -189,7 +194,7 @@
             <?php /* Comprobar si existen mas paginas */ ?>
             <?php if ($pagina < $totalPaginas): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>" class="boton">Siguiente</a>
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton"">Siguiente</a>
 
             <?php endif; ?>
 

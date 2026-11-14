@@ -88,7 +88,7 @@ if (empty($_SESSION['csrf_token'])) {
     }
 
     //obtiene la cantidad total de usuarios activos
-    $totalUsuarios = ContarUsuarios($conn);
+    $totalUsuarios = ContarUsuarios($conn, $filtro);
 
     //calcula la cantidad de paginas necesarias
     $totalPaginas = (int)ceil($totalUsuarios / $limite);

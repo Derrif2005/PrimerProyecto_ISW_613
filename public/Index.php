@@ -2,6 +2,8 @@
     require_once __DIR__ . '/pages/common/header.php';
     require_once __DIR__ . '/../includes/auth.php';
     // Obtiene el correo guardado en la cookie
+
+    require_once __DIR__ . '/../includes/mensajes.php';
     $correoRecordado = $_COOKIE['remembered_username'] ?? '';
 ?>
 
@@ -18,12 +20,7 @@
 
 
 
-            <?php 
-                        if(isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
-                            echo '<p class="mensaje-error">Correo o contrasea incorrectos</p>';                  
-                        }
-
-                    ?>
+            <?php renderAlert(); ?>
             <form action="actions/login.php" method="POST">
                 <div class="grupo-formulario">
                     <label for="correo">Correo</label>

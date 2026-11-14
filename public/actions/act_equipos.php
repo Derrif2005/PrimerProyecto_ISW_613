@@ -159,10 +159,19 @@ validarAdmin($conn);
 
 
       }catch(PDOException $error){
-        error_log('Error al actualizar equipos: ' . $error->getMessage());
-         header('Location: /actions/act_buscar_equipos.php?error=1');
-         exit;
-      }
+
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+        header('Location: /actions/act_buscar_equipos.php?error=codigo_duplicado');
+        exit;
+    }
+
+    //registra el error sin mostrarlo al usuario
+    error_log('Error al actualizar equipos: ' . $error->getMessage());
+
+    header('Location: /actions/act_buscar_equipos.php?error=1');
+    exit;
+    }   
 
       
 
@@ -256,12 +265,18 @@ validarAdmin($conn);
     exit;
         
     }catch(PDOException $error){
-     // Si ocurre un error, regresa a equipos
-        error_log('Error al crear equipo: ' . $error->getMessage());
 
-        header('Location: /actions/act_buscar_equipos.php?error=1');
+    //comprueba si existe un problema de integridad
+    if ($error->getCode() === '23000') {
+        header('Location: /actions/act_buscar_equipos.php?error=codigo_duplicado');
         exit;
+    }
 
+    //registra el error sin mostrarlo al usuario
+    error_log('Error al crear equipo: ' . $error->getMessage());
+
+    header('Location: /actions/act_buscar_equipos.php?error=1');
+    exit;
     }
 
 

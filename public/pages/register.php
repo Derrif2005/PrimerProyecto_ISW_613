@@ -3,6 +3,8 @@
 // Se inicia la sesión
 session_start();
 
+require_once __DIR__ . '/../../includes/mensajes.php';
+
 // Es un código de seguridad para el formulario
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -17,6 +19,7 @@ if (empty($_SESSION['csrf_token'])) {
         <div class="tarjeta">
 
             <h2>Crear Cuenta</h2>
+            <?php renderAlert(); ?>
 
             <?php /* Formulario de registro */ ?>
             <form action="/actions/act_register.php" method="POST">

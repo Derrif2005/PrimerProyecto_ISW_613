@@ -81,7 +81,7 @@ if (empty($_SESSION['csrf_token'])) {
     }
 
     // Obtiene el numero total de categorias activas
-    $totalCategorias = ContarCategorias($conn);
+    $totalCategorias = ContarCategorias($conn, $filtro);
 
     // Calcula el total de paginas y garantiza que exista por lo menos la pagina 1
     $totalPaginas = max(1, (int)ceil($totalCategorias / $limite));

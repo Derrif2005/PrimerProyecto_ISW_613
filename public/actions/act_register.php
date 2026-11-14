@@ -74,10 +74,11 @@ try{
   header('Location: /index.php?success=logged_out');
   
 } catch(PDOException $error){
-    // Registrara el error son mostralos en la vista
-    error_log('Error de registro'.$error->getMessage());
-    header('Location: /pages/register.php?error=1');
+    //comprueba si existe un problema de integridad
+if ($error->getCode() === '23000') {
+    header('Location: /pages/register.php?error=correo_duplicado');
     exit;
+}
 }
 
 

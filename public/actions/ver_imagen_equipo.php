@@ -4,6 +4,8 @@
 
     requireLogin();
 
+    validarPermiso($conn, 'equipos_ver');
+
     //Obtiene el id de la imagen
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
