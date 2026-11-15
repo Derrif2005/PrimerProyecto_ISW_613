@@ -30,7 +30,8 @@
 
         <!-- Seleccionar cantidad de equipos -->
         <form action="/actions/act_buscar_equipos.php" method="GET">
-
+            <input type="hidden" name="filtro"
+                value="<?= htmlspecialchars($filtro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
 
             <div class="grupo-formulario">

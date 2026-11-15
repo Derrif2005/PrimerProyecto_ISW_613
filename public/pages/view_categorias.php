@@ -25,7 +25,7 @@
     <div class="contenedor">
 
         <h1>Categorías</h1>
-        
+        <?php renderAlert(); ?>
         <p>Lista de categorías</p>
         <hr>
 

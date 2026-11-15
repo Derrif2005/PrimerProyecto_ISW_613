@@ -67,4 +67,4 @@ INSERT INTO equipos (categoria_id, nombre, codigo) VALUES
 (1, 'Laptop ASUS ROG Strix G16', '801604'),
 (1, 'Laptop Acer Nitro V15', '801605');
 
-
+INSERT INTO `configuracion`(`clave`, `valor`) VALUES ('prorroga_max_dias','2')

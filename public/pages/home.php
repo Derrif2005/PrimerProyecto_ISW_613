@@ -56,7 +56,7 @@ require_once __DIR__ . '/../../includes/auth.php';
             <div class="tarjeta-inicio">
                 <h2>Prestamos</h2>
                 <p>Consultar los Prestamos</p>
-                <a href="/pages/view_prestamo.php" class="boton boton-completo">Abrir</a>
+                <a href="/actions/act_buscar_prestamos.php" class="boton boton-completo">Abrir</a>
             </div>
 
 

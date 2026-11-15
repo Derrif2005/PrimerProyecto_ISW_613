@@ -17,6 +17,16 @@ const MESSAGES = [
         'correo_duplicado' => 'Ese correo ya esta registrado.',
         'categoria_duplicada' => 'Ya existe una categoria con ese nombre.',
         'prestamo' => 'prestamo no valido',
+        'fecha_invalida' => 'Las fechas del prestamo no son validas.',
+        'equipo_no_disponible' => 'Uno de los equipos seleccionados no esta disponible.',
+        'plazo_excedido' => 'El prestamo supera los dias permitidos por la categoria.',
+        'integridad' => 'No se pudo registrar el prestamo por un problema de integridad.',
+        'estado_invalido' => 'No se puede realizar el cambio de estado del prestamo.',
+        'estado_invalido' => 'No se puede realizar el cambio de estado del prestamo.',
+        'devolucion_invalida' => 'El equipo no pertenece al prestamo o ya fue devuelto.',
+        'prorroga_utilizada' => 'El prestamo ya utilizo su prorroga.',
+        'prorroga_excedida' => 'La prorroga supera los dias permitidos.',
+        'configuracion_invalida' => 'No se encontro una configuracion valida para la prorroga.',
     ],
 
     //mnsajes de exito
