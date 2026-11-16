@@ -3,8 +3,7 @@
 //COOKIES DE USUARIOS//
 //AQUI EMPIEZA
 
-// Cantidades permitidas para mostrar registros por pagina
-const cantidadespermitidas = [5, 10, 20];
+require_once __DIR__ . '/../config/constantes.php';
 
 
 //funcion para guardar los usuarios que se mostraran en la lista de usuarios
@@ -47,8 +46,6 @@ function obtenerCantidadUsuarios()
             // Si no esta permitida utiliza 10 por defecto
             return 10;
         }
-
-
 
     //devuelve la cantidad guardada como numero entero
     return (int)$cantidad;
@@ -154,5 +151,62 @@ function obtenerCantidadUsuarios()
         return $cantidad;
     }
 
-    //AQUI TERMINA
 
+
+
+    //Obtiene los equipos consultados recientemente
+//obtiene los equipos guardados en la cookie
+function obtenerEquiposRecientes(){
+
+    $cookie = $_COOKIE[EQUIPOS_RECIENTES_COOKIE] ?? '';
+
+    if(!is_string($cookie) || $cookie === ''){
+        return [];
+    }
+
+    $equipos = [];
+
+    foreach(explode(',', $cookie) as $id){
+
+        //comprueba que el id sea valido y no este repetido
+        if(ctype_digit($id) && (int)$id > 0 && (int)$id <= 2147483647 &&
+            !in_array((int)$id, $equipos, true)){
+            $equipos[] = (int)$id;
+        }
+
+        if(count($equipos) === 5){
+            break;
+        }
+    }
+
+    return $equipos;
+}
+
+
+//guarda los equipos consultados recientemente
+function guardarEquipoReciente(int $id){
+
+    //obtiene los equipos guardados
+    $equipos = obtenerEquiposRecientes();
+
+    //agrega el equipo al principio
+    array_unshift($equipos, $id);
+
+    //elimina los equipos repetidos
+    $equipos = array_unique($equipos);
+
+    //conserva solamente cinco equipos
+    $equipos = array_slice($equipos, 0, 5);
+
+    //guarda la cookie
+    setcookie(EQUIPOS_RECIENTES_COOKIE, implode(',', $equipos), [
+        'expires' => time() + 60 * 60 * 24 * 30,
+        'path' => '/',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+
+    return $equipos;
+}
+
+//AQUI TERMINA

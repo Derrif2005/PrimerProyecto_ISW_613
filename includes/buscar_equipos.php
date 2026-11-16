@@ -62,3 +62,14 @@ function findNombresEquipos(PDO $conn, $nombreEquipo)
     $statement->execute(['nombreEquipo' => $nombreEquipo]);
     return $statement->fetch(PDO::FETCH_ASSOC);
 }
+
+//busca los equipos por id
+function findEquiposId(PDO $conn, int $id){
+
+    $consulta = $conn->prepare('SELECT id, nombre, codigo
+    FROM equipos WHERE id = :id AND active = true LIMIT 1');
+
+    $consulta->execute(['id' => $id]);
+
+    return $consulta->fetch(PDO::FETCH_ASSOC);
+}

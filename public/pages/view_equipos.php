@@ -10,6 +10,11 @@
 
     // Comprobar el permiso para consultar equipos
     validarPermiso($conn, 'equipos_ver');
+    
+    if(!isset($Equipos)){
+    header('Location: /actions/act_buscar_equipos.php');
+    exit;
+}
 ?>
 
 <?php require_once 'common/header.php'; ?>
@@ -186,7 +191,8 @@
             <?php /* Comprobar que no estamos en la primera pagina */ ?>
             <?php if ($pagina > 1): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton"">Anterior</a>
+            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina - 1 ?>&amp;filtro=<?= urlencode($filtro) ?>"
+                class="boton"">Anterior</a>
 
             <?php endif; ?>
 
@@ -195,7 +201,8 @@
             <?php /* Comprobar si existen mas paginas */ ?>
             <?php if ($pagina < $totalPaginas): ?>
 
-            <a href="/actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>&amp;filtro=<?= urlencode($filtro) ?>" class="boton"">Siguiente</a>
+            <a href=" /actions/act_buscar_equipos.php?pagina=<?= $pagina + 1 ?>&amp;filtro=<?= urlencode($filtro) ?>"
+                class="boton"">Siguiente</a>
 
             <?php endif; ?>
 
@@ -206,181 +213,207 @@
 
     <!-- FORMULARIOS DE EQUIPOS -->
 
-    <div class="contenedor">
-        <div class="tarjeta">
+    <div class=" contenedor">
+                <div class="tarjeta">
 
-            <h2>Buscar equipo</h2>
+                    <h2>Buscar equipo</h2>
 
-            <!-- Buscar equipo por nombre -->
-            <form action="/actions/act_buscar_equipos.php" method="GET">
+                    <?php if((int)$_SESSION['id_rol'] === 2): ?>
 
-                <div class="grupo-formulario">
-                    <label for="buscar_equipo">Nombre del equipo</label>
+                    <h3>Equipos recientes</h3>
 
-                    <input type="text" id="buscar_equipo" name="buscar_equipo" required>
+                    <?php foreach($EquiposRecientes as $reciente): ?>
+
+                    <p>
+                        <a href="/actions/act_buscar_equipos.php?buscar_id=<?= (int)$reciente['id'] ?>">
+                            <?= htmlspecialchars($reciente['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        </a>
+                    </p>
+
+                    <?php endforeach; ?>
+
+                    <?php endif; ?>
+
+                    <!-- Buscar equipo por nombre -->
+                    <form action="/actions/act_buscar_equipos.php" method="GET">
+
+                        <div class="grupo-formulario">
+                            <label for="buscar_equipo">Nombre del equipo</label>
+
+                            <input type="text" id="buscar_equipo" name="buscar_equipo" required>
+                        </div>
+
+                        <button type="submit" class="boton boton-completo">
+                            Buscar
+                        </button>
+
+                    </form>
+
+                    <?php if((int)$_SESSION['id_rol'] === 2 && $encontrarEquipo !== false): ?>
+
+                    <h3>Equipo consultado</h3>
+
+                    <p>Nombre: <?= htmlspecialchars($encontrarEquipo['nombre']) ?></p>
+
+                    <p>Codigo: <?= htmlspecialchars($encontrarEquipo['codigo']) ?></p>
+
+                    <?php endif; ?>
+
+                    <!-- FORMULARIO DE ACTUALIZAR EQUIPO -->
+
+                    <?php if ((int)$_SESSION['id_rol'] === 1 && $encontrarEquipo !== false): ?>
+
+                    <h2>Actualizar equipo</h2>
+
+                    <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
+
+                        <input type="hidden" name="accion" value="actualizar">
+
+                        <input type="hidden" id="id" name="id"
+                            value="<?php echo htmlspecialchars($encontrarEquipo['id'], ENT_QUOTES, 'UTF-8'); ?>">
+
+                        <div class="grupo-formulario">
+                            <label for="nombre">Nombre</label>
+
+                            <input type="text" id="nombre" name="nombre"
+                                value="<?php echo htmlspecialchars($encontrarEquipo['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                                maxlength="50" required>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="categoria_id">Categoría</label>
+
+                            <select id="categoria_id" name="categoria_id" required>
+
+                                <?php foreach ($Categorias as $categoria): ?>
+
+                                <option value="<?php echo (int)$categoria['id']; ?>"
+                                    <?php if ((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
+
+                                    <?php echo htmlspecialchars($categoria['nombre']); ?>
+
+                                </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="codigo">Código</label>
+
+                            <input type="text" id="codigo" name="codigo"
+                                value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8'); ?>"
+                                maxlength="50" required>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="active">Estado</label>
+
+                            <select id="active" name="active">
+
+                                <option value="1" <?php if ((int)$encontrarEquipo['active'] === 1) echo 'selected'; ?>>
+                                    Activo
+                                </option>
+
+                                <option value="0" <?php if ((int)$encontrarEquipo['active'] === 0) echo 'selected'; ?>>
+                                    Inactivo
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="image">Imagen</label>
+
+                            <input type="file" id="image" name="image[]" accept="image/jpeg,image/png,image/webp"
+                                multiple>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="version">Versión</label>
+
+                            <input type="text" id="version" name="version"
+                                value="<?php echo htmlspecialchars($encontrarEquipo['versionn'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="eliminado_en">Eliminado en</label>
+
+                            <input type="text" id="eliminado_en" name="eliminado_en"
+                                value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+
+                        <button type="submit" class="boton boton-completo">
+                            Actualizar equipo
+                        </button>
+
+                    </form>
+
+                    <?php endif; ?>
+
+
+                    <!-- FORMULARIO PARA CREAR EQUIPO -->
+
+                    <?php if ($mostrarE): ?>
+
+                    <h2>Crear equipo</h2>
+
+                    <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
+
+                        <input type="hidden" name="accion" value="crear">
+
+                        <div class="grupo-formulario">
+                            <label for="nombre">Nombre</label>
+
+                            <input type="text" id="nombre" name="nombre" maxlength="50" required>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="categoria_id">Categoría</label>
+
+                            <select id="categoria_id" name="categoria_id" required>
+
+                                <?php foreach ($Categorias as $categoria): ?>
+
+                                <option value="<?php echo (int)$categoria['id']; ?>">
+                                    <?php echo htmlspecialchars($categoria['nombre']); ?>
+                                </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="codigo">Código</label>
+
+                            <input type="text" id="codigo" name="codigo" maxlength="50" required>
+                        </div>
+
+                        <div class="grupo-formulario">
+                            <label for="image">Imágenes</label>
+
+                            <input type="file" id="image" name="image[]" accept="image/jpeg,image/png,image/webp"
+                                multiple required>
+                        </div>
+
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+
+                        <button type="submit" class="boton boton-completo">
+                            Crear equipo
+                        </button>
+
+                    </form>
+
+                    <?php endif; ?>
+
                 </div>
-
-                <button type="submit" class="boton boton-completo">
-                    Buscar
-                </button>
-
-            </form>
-
-
-            <!-- FORMULARIO DE ACTUALIZAR EQUIPO -->
-
-            <?php if ($encontrarEquipo !== false): ?>
-
-            <h2>Actualizar equipo</h2>
-
-            <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
-
-                <input type="hidden" name="accion" value="actualizar">
-
-                <input type="hidden" id="id" name="id"
-                    value="<?php echo htmlspecialchars($encontrarEquipo['id'], ENT_QUOTES, 'UTF-8'); ?>">
-
-                <div class="grupo-formulario">
-                    <label for="nombre">Nombre</label>
-
-                    <input type="text" id="nombre" name="nombre"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
-                        maxlength="50" required>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="categoria_id">Categoría</label>
-
-                    <select id="categoria_id" name="categoria_id" required>
-
-                        <?php foreach ($Categorias as $categoria): ?>
-
-                        <option value="<?php echo (int)$categoria['id']; ?>"
-                            <?php if ((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
-
-                            <?php echo htmlspecialchars($categoria['nombre']); ?>
-
-                        </option>
-
-                        <?php endforeach; ?>
-
-                    </select>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="codigo">Código</label>
-
-                    <input type="text" id="codigo" name="codigo"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8'); ?>"
-                        maxlength="50" required>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="active">Estado</label>
-
-                    <select id="active" name="active">
-
-                        <option value="1" <?php if ((int)$encontrarEquipo['active'] === 1) echo 'selected'; ?>>
-                            Activo
-                        </option>
-
-                        <option value="0" <?php if ((int)$encontrarEquipo['active'] === 0) echo 'selected'; ?>>
-                            Inactivo
-                        </option>
-
-                    </select>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="image">Imagen</label>
-
-                    <input type="file" id="image" name="image[]" accept="image/jpeg,image/png,image/webp" multiple>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="version">Versión</label>
-
-                    <input type="text" id="version" name="version"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['versionn'], ENT_QUOTES, 'UTF-8'); ?>">
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="eliminado_en">Eliminado en</label>
-
-                    <input type="text" id="eliminado_en" name="eliminado_en"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                </div>
-
-                <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-
-                <button type="submit" class="boton boton-completo">
-                    Actualizar equipo
-                </button>
-
-            </form>
-
-            <?php endif; ?>
-
-
-            <!-- FORMULARIO PARA CREAR EQUIPO -->
-
-            <?php if ($mostrarE): ?>
-
-            <h2>Crear equipo</h2>
-
-            <form action="/actions/act_equipos.php" method="POST" enctype="multipart/form-data">
-
-                <input type="hidden" name="accion" value="crear">
-
-                <div class="grupo-formulario">
-                    <label for="nombre">Nombre</label>
-
-                    <input type="text" id="nombre" name="nombre" maxlength="50" required>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="categoria_id">Categoría</label>
-
-                    <select id="categoria_id" name="categoria_id" required>
-
-                        <?php foreach ($Categorias as $categoria): ?>
-
-                        <option value="<?php echo (int)$categoria['id']; ?>">
-                            <?php echo htmlspecialchars($categoria['nombre']); ?>
-                        </option>
-
-                        <?php endforeach; ?>
-
-                    </select>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="codigo">Código</label>
-
-                    <input type="text" id="codigo" name="codigo" maxlength="50" required>
-                </div>
-
-                <div class="grupo-formulario">
-                    <label for="image">Imágenes</label>
-
-                    <input type="file" id="image" name="image[]" accept="image/jpeg,image/png,image/webp" multiple
-                        required>
-                </div>
-
-                <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-
-                <button type="submit" class="boton boton-completo">
-                    Crear equipo
-                </button>
-
-            </form>
-
-            <?php endif; ?>
-
         </div>
-    </div>
 
 
-    <?php require_once 'common/footer.php'; ?>
+        <?php require_once 'common/footer.php'; ?>

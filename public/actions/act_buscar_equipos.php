@@ -32,6 +32,37 @@ if (empty($_SESSION['csrf_token'])) {
         $encontrarEquipo = findNombresEquipos($conn,trim($_GET['buscar_equipo']));
     }
 
+    //equipos consultados recientemente
+$EquiposRecientes = [];
+
+    if((int)$_SESSION['id_rol'] === 2){
+
+        //busca el equipo por id
+        $id = $_GET['buscar_id'] ?? '';
+
+        if(is_string($id) && ctype_digit($id)){
+            $encontrarEquipo = findEquiposId($conn, (int)$id);
+        }
+
+        //obtiene los equipos recientes
+        $recientes = obtenerEquiposRecientes();
+
+        //guarda el equipo consultado
+        if($encontrarEquipo !== false){
+            $recientes = guardarEquipoReciente((int)$encontrarEquipo['id']);
+        }
+
+        //busca los equipos de la cookie
+        foreach($recientes as $id){
+
+            $equipo = findEquiposId($conn, $id);
+
+            if($equipo !== false){
+                $EquiposRecientes[] = $equipo;
+            }
+        }
+    }
+
     //obtiene el nombre que se desea buscar en la tabla
     $filtro = $_GET['filtro'] ?? '';
 

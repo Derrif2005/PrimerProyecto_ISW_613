@@ -83,14 +83,22 @@ if ($user === false || !password_verify($password, $user['password_hash'])
 } 
 
 
-// Set session variables and redirect to dashboard
-loginUser($user);
+//Inicia la sesion
+    loginUser($user);
+    try{
 
-// "Remember me": store the username in a cookie for 30 days, or clear it if unchecked
-if (isset($_POST['remember_me'])) {
-    rememberUsername($user['correo']);
-} else {
-    forgetUsername();
-}
+        //Elimina el token anterior
+        eliminarToken($conn);
 
-header('Location: /pages/home.php');
+        //Comprueba si el usuario selecciono recordarme
+        if(isset($_POST['remember_me'])){
+            crearToken($conn, (int)$user['id']);
+        }
+
+    }catch(PDOException $error){
+        error_log('Error al guardar token: ' . $error->getMessage());
+    }
+
+    header('Location: /pages/home.php');
+    exit;
+

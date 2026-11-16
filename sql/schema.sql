@@ -104,3 +104,14 @@ create table prestamo_detalle(
     foreign key (equipo_id) references equipos(id) 
 
 );
+
+
+create table auth_tokens(
+    id int primary key auto_increment,
+    usuario_id int not null,
+    selector varchar(18) not null unique,
+    validator_hash varchar(64) not null,
+    expira_en datetime not null,
+
+    foreign key (usuario_id) references usuarios(id)
+);

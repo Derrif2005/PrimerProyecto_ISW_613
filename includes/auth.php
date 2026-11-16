@@ -1,9 +1,6 @@
 <?php
-// Vence la sesion despues de 30 minutos
-const SESSION_TIMEOUT_SECONDS = 30 * 60;
 
-
-const REMEMBER_COOKIE = 'remembered_username';
+require_once __DIR__ . '/../config/constantes.php';
 
 //inicia la sesion si no esta iniciada
 function startSession()
@@ -43,47 +40,188 @@ function logoutUser()
 }
 
 // Pretege la paginas que requieren iniciar sesion
-function requireLogin()
-{
+function requireLogin(){
     startSession();
-//si no hay un usuario auntetificado, vuelve al login
+
+    //Si no hay un usuario autenticado, vuelve al login
     if (!isset($_SESSION['user_id'])) {
         header('Location: /?error=login_required');
         exit;
     }
-//comprueba cuanto tiempo lleva inactivo
+
+    //Comprueba cuanto tiempo lleva inactivo
     if (time() - ($_SESSION['last_activity'] ?? 0) > SESSION_TIMEOUT_SECONDS) {
-        logoutUser();
         header('Location: /?error=session_expired');
         exit;
     }
-//Actualiza la ultima actividad
+
+    //Actualiza la ultima actividad
     $_SESSION['last_activity'] = time();
 }
 
+//Genera el token para recordar la sesion
+function crearToken(PDO $conn, int $usuario_id){
 
-//Recuerda el usuario
-function rememberUsername($user)
-{
-    setcookie(REMEMBER_COOKIE, $user, [
-        'expires' => time() + 60 * 60 * 24 * 30,
+    //Genera el selector y el validador
+    $selector = bin2hex(random_bytes(9));
+    $validator = bin2hex(random_bytes(32));
+
+    //Genera el hash del validador
+    $validator_hash = hash('sha256', $validator);
+
+    //Guarda el token en la base de datos
+    $consulta = $conn->prepare('INSERT INTO auth_tokens
+    (usuario_id, selector, validator_hash, expira_en)
+    VALUES(:usuario_id, :selector, :validator_hash, DATE_ADD(NOW(), INTERVAL 14 DAY))');
+
+    $consulta->execute([
+        'usuario_id' => $usuario_id,
+        'selector' => $selector,
+        'validator_hash' => $validator_hash
+    ]);
+
+    //Guarda el token en la cookie
+    setcookie(REMEMBER_TOKEN_COOKIE, "$selector:$validator", [
+        'expires' => time() + 60 * 60 * 24 * 14,
         'path' => '/',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
 }
 
-//olvida el usuario
-function forgetUsername()
-{
-    setcookie(REMEMBER_COOKIE, '', [
+
+//Valida el token para recuperar la sesion
+function validarToken(PDO $conn){
+
+    //Obtiene la cookie
+    $token = $_COOKIE[REMEMBER_TOKEN_COOKIE] ?? '';
+
+    //Comprueba que la cookie sea valida
+    if(!is_string($token) || $token === ''){
+        return false;
+    }
+
+    //Separa el selector y el validador
+    $datos = explode(':', $token, 2);
+
+    if(count($datos) !== 2){
+        return false;
+    }
+
+    $selector = $datos[0];
+    $validator = $datos[1];
+
+    //Comprueba el formato del token
+    if(strlen($selector) !== 18 || strlen($validator) !== 64 ||
+        !ctype_xdigit($selector) || !ctype_xdigit($validator)){
+        return false;
+    }
+
+    //Busca el token y los datos del usuario
+    $consulta = $conn->prepare('SELECT u.id, u.nombre, u.correo,
+    u.id_rol, u.active, t.validator_hash
+    FROM auth_tokens t
+    INNER JOIN usuarios u ON t.usuario_id = u.id
+    WHERE t.selector = :selector
+    AND t.expira_en > NOW()
+    AND u.active = 1 LIMIT 1');
+
+    $consulta->execute(['selector' => $selector]);
+    $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
+
+    //Comprueba que el token exista
+    if($usuario === false){
+        return false;
+    }
+
+    //Comprueba que el validador sea correcto
+    if(!hash_equals($usuario['validator_hash'], hash('sha256', $validator))){
+        return false;
+    }
+
+    //Genera un nuevo selector y validador
+    $nuevo_selector = bin2hex(random_bytes(9));
+    $nuevo_validator = bin2hex(random_bytes(32));
+
+    //Actualiza el token anterior
+    $consulta = $conn->prepare('UPDATE auth_tokens
+    SET selector = :nuevo_selector,
+    validator_hash = :nuevo_hash,
+    expira_en = DATE_ADD(NOW(), INTERVAL 14 DAY)
+    WHERE selector = :selector
+    AND validator_hash = :validator_hash
+    AND expira_en > NOW()');
+
+    $consulta->execute([
+        'nuevo_selector' => $nuevo_selector,
+        'nuevo_hash' => hash('sha256', $nuevo_validator),
+        'selector' => $selector,
+        'validator_hash' => $usuario['validator_hash']
+    ]);
+
+    //Comprueba que el token se actualizo
+    if($consulta->rowCount() !== 1){
+        return false;
+    }
+
+    //Guarda el nuevo token en la cookie
+    setcookie(REMEMBER_TOKEN_COOKIE, "$nuevo_selector:$nuevo_validator", [
+        'expires' => time() + 60 * 60 * 24 * 14,
+        'path' => '/',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+
+    //Recupera la sesion del usuario
+    loginUser($usuario);
+
+    return true;
+}
+
+
+//Elimina el token para olvidar la sesion
+function eliminarToken(PDO $conn){
+
+    //Obtiene la cookie
+    $token = $_COOKIE[REMEMBER_TOKEN_COOKIE] ?? '';
+
+    //Elimina la cookie
+    setcookie(REMEMBER_TOKEN_COOKIE, '', [
         'expires' => time() - 3600,
         'path' => '/',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
-}
 
+    unset($_COOKIE[REMEMBER_TOKEN_COOKIE]);
+
+    //Comprueba que la cookie sea valida
+    if(!is_string($token) || $token === ''){
+        return;
+    }
+
+    //Separa el selector y el validador
+    $datos = explode(':', $token, 2);
+
+    if(count($datos) === 2){
+
+        $selector = $datos[0];
+        $validator_hash = hash('sha256', $datos[1]);
+
+        //Elimina el token de la base de datos
+        $consulta = $conn->prepare('DELETE FROM auth_tokens
+        WHERE selector = :selector
+        AND validator_hash = :validator_hash');
+
+        $consulta->execute([
+            'selector' => $selector,
+            'validator_hash' => $validator_hash
+        ]);
+    }
+}
 
 
 //se agrega la funcion de verificar el rol de usuario ya que durante el desarollo del programa se repite mucho ese codigo

@@ -1,10 +1,54 @@
 <?php   
-    require_once __DIR__ . '/pages/common/header.php';
+    require_once __DIR__ . '/../config/conexion.php';
     require_once __DIR__ . '/../includes/auth.php';
-    // Obtiene el correo guardado en la cookie
-
     require_once __DIR__ . '/../includes/mensajes.php';
-    $correoRecordado = $_COOKIE['remembered_username'] ?? '';
+
+    startSession();
+
+    //Comprueba si existe una sesion
+    if(isset($_SESSION['user_id'])){
+
+        //Comprueba si la sesion ha vencido
+        if(time() - ($_SESSION['last_activity'] ?? 0) > SESSION_TIMEOUT_SECONDS){
+
+            try{
+                eliminarToken($conn);
+            }catch(PDOException $error){
+                error_log('Error al eliminar token: ' . $error->getMessage());
+                logoutUser();
+                http_response_code(500);
+                exit('No se pudo revocar el token');
+            }
+
+            logoutUser();
+
+            header('Location: /?error=session_expired');
+            exit;
+
+        }else{
+            header('Location: /pages/home.php');
+            exit;
+        }
+    }
+
+    //Comprueba si existe una cookie para recuperar la sesion
+    if(isset($_COOKIE[REMEMBER_TOKEN_COOKIE])){
+
+        try{
+
+            //Valida el token
+            if(validarToken($conn)){
+                header('Location: /pages/home.php');
+                exit;
+            }else{
+                eliminarToken($conn);
+            }
+
+        }catch(PDOException $error){
+            error_log('Error al recuperar sesion: ' . $error->getMessage());
+        }
+    }
+    require_once __DIR__ . '/pages/common/header.php';
 ?>
 
 <body>
@@ -24,8 +68,7 @@
             <form action="actions/login.php" method="POST">
                 <div class="grupo-formulario">
                     <label for="correo">Correo</label>
-                    <input type="email" id="correo" name="correo"
-                        value="<?= htmlspecialchars($correoRecordado, ENT_QUOTES, 'UTF-8') ?>" required>
+                    <input type="email" id="correo" name="correo" required>
                 </div>
 
                 <div class="grupo-formulario">
@@ -35,8 +78,7 @@
 
                 <?php /* Pendiente de revisar */ ?>
                 <div class="grupo-recordar">
-                    <input type="checkbox" id="remember_me" name="remember_me"
-                        <?php echo $correoRecordado !== '' ? 'checked' : ''; ?>>
+                   <input type="checkbox" id="remember_me" name="remember_me">
                     <label for="remember_me">Recuérdame</label>
                 </div>
 
