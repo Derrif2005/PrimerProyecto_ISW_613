@@ -1,9 +1,9 @@
 <?php
 
-session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/bitacora.php';
 require_once __DIR__ . '/../../includes/buscar_equipos.php';
 require_once __DIR__ . '/../../includes/imagenes_equipos.php';
 require_once __DIR__ . '/../../includes/buscar_categorias.php';
@@ -17,7 +17,11 @@ require_once __DIR__ . '/../../includes/mensajes.php';
 
 
 requireLogin();
-
+//Solo permite solicitudes mediante POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Metodo no permitido');
+}
 
 //Comprueba que el codigo es del CSRF
 $token = $_POST['csrf_token'] ?? '';
@@ -42,6 +46,24 @@ $imagenes = $_FILES['image'] ?? null;
 
 //determina si la accion es para crear o actualizar
 $accion = $_POST['accion'] ?? '';
+
+$versionn = $_POST['versionn'] ?? '';
+
+//Valida la version al crear o actualizar
+if ($accion === 'crear' || $accion === 'actualizar') {
+
+    if (!is_string($versionn) || strlen(trim($versionn)) > 50) {
+        header('Location: /actions/act_buscar_equipos.php?error=1');
+        exit;
+    }
+
+    $versionn = trim($versionn);
+
+    //Si no se escribe una version, guarda NULL
+    if ($versionn === '') {
+        $versionn = null;
+    }
+}
 
 
 validarAdmin($conn);
@@ -92,12 +114,15 @@ validarAdmin($conn);
     }
 
       try{
-    //Busca por id de equipo y comprueba que existe  
-    $consulta = $conn->prepare('SELECT id FROM equipos WHERE id = :id LIMIT 1');
-    $consulta->execute(['id'=> $id]);
-    $id_existente = $consulta->fetch(PDO::FETCH_ASSOC);
-    //si el equipo no existe, devuelve un error
-    if($id_existente === false){
+        $conn->beginTransaction();
+        $datosAntes = obtenerDatosBitacora($conn, 'equipos', $id);
+        //Busca por id de equipo y comprueba que existe  
+        $consulta = $conn->prepare('SELECT id FROM equipos WHERE id = :id LIMIT 1');
+        $consulta->execute(['id'=> $id]);
+        $id_existente = $consulta->fetch(PDO::FETCH_ASSOC);
+        //si el equipo no existe, devuelve un error
+        if($id_existente === false){
+        $conn->rollBack();
         header('Location: /actions/act_buscar_equipos.php?error=1');
         exit;
     }
@@ -109,14 +134,30 @@ validarAdmin($conn);
 
       //se la categoria no existe, devuelve error
       if($categoria_existente === false){
+        $conn->rollBack();
          header('Location: /actions/act_buscar_equipos.php?error=1');
         exit;
       }
 
+      //Conserva la fecha anterior si sigue inactivo
+$eliminado_en = $datosAntes['eliminado_en'];
 
-    $consulta = $conn->prepare('UPDATE equipos SET categoria_id = :categoria_id, nombre =:nombre, codigo = :codigo, active = :active, versionn = versionn + 1 WHERE id = :id');
-    $consulta->execute(['categoria_id' => $categoria_id, 'nombre' => trim($nombre), 'codigo' => trim($codigo), 'active' => $active, 'id' => $id ]);
-   
+if ($active === '1') {
+    $eliminado_en = null;
+} elseif ((int)$datosAntes['active'] === 1) {
+    //Obtiene la fecha con el mismo reloj de MySQL
+    $consultaFecha = $conn->query('SELECT NOW()');
+    $eliminado_en = $consultaFecha->fetchColumn();
+}
+
+    //Actualiza el equipo
+    $consulta = $conn->prepare('UPDATE equipos SET categoria_id = :categoria_id, nombre = :nombre, codigo = :codigo, active = :active,
+     versionn = :versionn, eliminado_en = :eliminado_en WHERE id = :id');
+
+    $consulta->execute([
+    'categoria_id' => $categoria_id, 'nombre' => trim($nombre), 'codigo' => trim($codigo),'active' => $active,
+    'versionn' => $versionn,'eliminado_en' => $eliminado_en,'id' => $id]);
+     
     //Cuenta las imagenes que fallaron
     $imagenesFallidas = 0;
     //comprueba si se seleccionaron imagenes nueva
@@ -147,6 +188,11 @@ validarAdmin($conn);
             }
         }
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'equipos', $id);
+        registrarBitacora($conn, 'actualizar', $id, $datosAntes, $datosDespues, 'equipos');
+        $conn->commit();
          // Comprueba si alguna imagen fallo
         if ($imagenesFallidas > 0) {
             header('Location: /actions/act_buscar_equipos.php?parcial=1');
@@ -159,6 +205,9 @@ validarAdmin($conn);
 
 
       }catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
 
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
@@ -218,12 +267,15 @@ validarAdmin($conn);
 
 
      try{
+        $conn->beginTransaction();
 
 
     //Guarda la categoria 
-    $consulta = $conn->prepare('INSERT INTO equipos (categoria_id, nombre, codigo) VALUES(:categoria_id, :nombre, :codigo)');
-    $consulta->execute(['categoria_id' => $categoria_id, 'nombre' => trim($nombre), 'codigo' => trim($codigo)]);
+   $consulta = $conn->prepare(
+    'INSERT INTO equipos (categoria_id, nombre, codigo, versionn) VALUES (:categoria_id, :nombre, :codigo, :versionn)'
+);
 
+    $consulta->execute(['categoria_id' => $categoria_id, 'nombre' => trim($nombre), 'codigo' => trim($codigo),'versionn' => $versionn]);
     $equipo_id = (int)$conn->lastInsertId();
 
     $consultaImagen = $conn->prepare('INSERT INTO equipo_imagenes (equipo_id, imagen_ruta) VALUES (:equipo_id, :imagen_ruta)');
@@ -256,6 +308,11 @@ validarAdmin($conn);
     }
 
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'equipos', $equipo_id);
+        registrarBitacora($conn, 'crear', $equipo_id, null, $datosDespues, 'equipos');
+        $conn->commit();
     if($imagenesFallidas > 0){
         header('Location: /actions/act_buscar_equipos.php?parcial=1');
         exit;
@@ -265,6 +322,9 @@ validarAdmin($conn);
     exit;
         
     }catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
 
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
@@ -291,19 +351,32 @@ validarAdmin($conn);
             exit;
         }
         try{
+        $conn->beginTransaction();
+            $datosAntes = obtenerDatosBitacora($conn, 'equipos', $id);
+            if((int)$datosAntes['active'] !== 1){
+                throw new PDOException('El equipo ya esta inactivo');
+            }
             //cambia el estado a inactivo
-            $consulta = $conn->prepare('UPDATE equipos SET active = 0 WHERE id = :id and active = 1');
+           $consulta = $conn->prepare('UPDATE equipos SET active = 0, eliminado_en = NOW() WHERE id = :id AND active = 1');
 
             $consulta->execute(['id' => $id]);
 
             
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'equipos', $id);
+        registrarBitacora($conn, 'eliminar', $id, $datosAntes, $datosDespues, 'equipos');
+        $conn->commit();
             // Si todo sale bien, regresa a equipos
             header('Location: /actions/act_buscar_equipos.php?success=1');
             exit;
 
         
-        } catch (PDOException $error) {
+        } catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
 
             error_log('Error al eliminar equipo: ' . $error->getMessage());
 
@@ -311,11 +384,3 @@ validarAdmin($conn);
             exit;
         }
     }
-
-  
-
-
-
-
-    
-   

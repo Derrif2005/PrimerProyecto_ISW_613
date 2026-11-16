@@ -1,5 +1,10 @@
 <?php
 
+//Guarda los errores sin mostrarlos en pantalla
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
 // Datos de la base de datos.
 $servidor = "127.0.0.1";
 $usuario = "root";

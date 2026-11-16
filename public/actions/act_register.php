@@ -1,9 +1,11 @@
 <?php
 
-session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/auth.php';
+
+startSession();
 
 //Codigo para que solo se pueda mandar el formulario por medio de POST
 if($_SERVER['REQUEST_METHOD'] !== 'POST'){

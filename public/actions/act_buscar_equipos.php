@@ -1,10 +1,10 @@
 <?php
-session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/buscar_equipos.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/buscar_usuarios.php';
 
 //Llama a la funcion para llegar la categoria
 require_once __DIR__ . '/../../includes/buscar_categorias.php';
@@ -15,6 +15,18 @@ require_once __DIR__ . '/../../includes/cookies.php';
 requireLogin();
 
 validarPermiso($conn, 'equipos_ver');
+
+//Obtiene el rol actual del usuario
+$rolActual = obtenerRolActual($conn, (int)$_SESSION['user_id']);
+
+if($rolActual === false){
+    http_response_code(403);
+    exit('Acceso denegado');
+}
+
+//Comprueba el rol del usuario
+$esAdmin = $rolActual === 1;
+$esOperador = $rolActual === 2;
 
 // comprueba si el todavia tiene token 
 if (empty($_SESSION['csrf_token'])) {
@@ -35,7 +47,7 @@ if (empty($_SESSION['csrf_token'])) {
     //equipos consultados recientemente
 $EquiposRecientes = [];
 
-    if((int)$_SESSION['id_rol'] === 2){
+    if($esOperador){
 
         //busca el equipo por id
         $id = $_GET['buscar_id'] ?? '';
@@ -143,6 +155,6 @@ $Categorias = getCategoriasParaSelect($conn);
 
 
 //Variable para mostrar el formulario de crear
-$mostrarE = isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
+$mostrarE = $esAdmin && isset($_GET['nuevo']) && $_GET['nuevo'] === '1';
 //carga pagina para mostrar los datos del usuario
 require __DIR__ . '/../pages/view_equipos.php';

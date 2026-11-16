@@ -102,11 +102,11 @@
                 <tr>
                     <td><?php echo (int)$user['id']; ?></td>
 
-                    <td><?php echo htmlspecialchars($user['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($user['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
 
-                    <td><?php echo htmlspecialchars($user['correo']); ?></td>
+                    <td><?php echo htmlspecialchars($user['correo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
 
-                    <td><?php echo htmlspecialchars($user['rol']); ?></td>
+                    <td><?php echo htmlspecialchars($user['rol'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
 
                     <td>
                         <?php

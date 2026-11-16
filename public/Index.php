@@ -48,7 +48,13 @@
             error_log('Error al recuperar sesion: ' . $error->getMessage());
         }
     }
+    //Genera el codigo de seguridad del formulario
+    if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
     require_once __DIR__ . '/pages/common/header.php';
+
 ?>
 
 <body>
@@ -66,6 +72,7 @@
 
             <?php renderAlert(); ?>
             <form action="actions/login.php" method="POST">
+                <input type="hidden"name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'],ENT_QUOTES | ENT_SUBSTITUTE,'UTF-8') ?>">
                 <div class="grupo-formulario">
                     <label for="correo">Correo</label>
                     <input type="email" id="correo" name="correo" required>

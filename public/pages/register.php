@@ -1,11 +1,12 @@
 
 <?php
-// Se inicia la sesión
-session_start();
 
+require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/mensajes.php';
 
-// Es un código de seguridad para el formulario
+startSession();
+
+//Es un codigo de seguridad para el formulario
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }

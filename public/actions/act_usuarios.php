@@ -1,10 +1,10 @@
 <?php
 
-session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/buscar_usuarios.php';
+require_once __DIR__ . '/../../includes/bitacora.php';
 
 //Comprobara si tiene una sesion iniciada y ahora tambien si es administrador
 require_once __DIR__ . '/../../includes/auth.php';
@@ -16,6 +16,11 @@ require_once __DIR__ . '/../../includes/mensajes.php';
 
 requireLogin();
 
+//Solo permite solicitudes mediante POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Metodo no permitido');
+}
 
 //Comprueba que el codigo es del CSRF
 $token = $_POST['csrf_token'] ?? '';
@@ -62,15 +67,15 @@ validarAdmin($conn);
 
 
     try{
-    validarRol($conn, $id_rol);
+    validarRol($conn, $id_rol); $conn->beginTransaction();
     
 
     //Busca el id del usuario para comprobar que existe
-    $consulta = $conn->prepare('SELECT id FROM usuarios WHERE id=:id LIMIT 1');
+    $consulta = $conn->prepare('SELECT id, nombre, correo, id_rol, active FROM usuarios WHERE id=:id LIMIT 1 FOR UPDATE');
     $consulta->execute(['id' => $id]);
     $usuario_existente = $consulta->fetch(PDO::FETCH_ASSOC);
     //Valida que $Usuario_existente es verdero
-    if($usuario_existente === false){
+    if($usuario_existente === false){ $conn->rollBack();
         header('Location: /actions/act_buscar_usuarios.php?error=1');
         exit;
     }    
@@ -79,8 +84,9 @@ validarAdmin($conn);
     //Actualiza el codigo 
     $consulta = $conn->prepare('UPDATE usuarios SET nombre = :nombre, correo = :correo, id_rol = :id_rol, active = :active WHERE id = :id');
     $consulta->execute(['nombre' => trim($nombre), 'correo' => trim($correo), 'id_rol' => $id_rol, 'active' => $active, 'id' =>$id ]); 
-    header('Location: /actions/act_buscar_usuarios.php?success=1');
-    exit;
+    $datosNuevos = ['id' => $id, 'nombre' => trim($nombre), 'correo' => trim($correo), 'id_rol' => $id_rol, 'active' => $active];
+    registrarBitacora($conn, 'actualizar', $id, $usuario_existente, $datosNuevos);
+    $conn->commit();
 
      //Al terminar borra el codigo para generar uno nuevo al recargar
     unset($_SESSION['csrf_token']);
@@ -90,7 +96,7 @@ validarAdmin($conn);
     exit;
 
 
-    } catch(PDOException $error){
+    } catch(PDOException $error){ if($conn->inTransaction()){ $conn->rollBack(); }
 
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
@@ -120,7 +126,7 @@ validarAdmin($conn);
     }
 
     try{
-        validarRol($conn, $id_rol);
+        validarRol($conn, $id_rol); $conn->beginTransaction();
 
         //Guarda el usuario con su rol asignado
         $consulta = $conn->prepare('INSERT INTO usuarios (id_rol, nombre, correo, password_hash) VALUES(:rol, :nombre, :correo, :hash)'
@@ -131,13 +137,19 @@ validarAdmin($conn);
         'hash' => password_hash($password,PASSWORD_DEFAULT)
         ]);
 
+        $usuario_id = $conn->lastInsertId();
+        $consulta = $conn->prepare('SELECT id, nombre, correo, id_rol, active FROM usuarios WHERE id = :id');
+        $consulta->execute(['id' => $usuario_id]);
+        $datosNuevos = $consulta->fetch(PDO::FETCH_ASSOC);
+        registrarBitacora($conn, 'crear', $usuario_id, null, $datosNuevos);
+        $conn->commit();
         //Al terminar borra el codigo para generar uno nuevo al recargar
         unset($_SESSION['csrf_token']);
 
         //Vuelve al formulario mostrando un mesaje de exito
         header('Location: /actions/act_buscar_usuarios.php?ok=1');
         exit;
-    } catch(PDOException $error){
+    } catch(PDOException $error){ if($conn->inTransaction()){ $conn->rollBack(); }
 
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
@@ -166,49 +178,37 @@ validarAdmin($conn);
             exit;
         }
 
-        $consulta = $conn->prepare('UPDATE usuarios SET active = 0 WHERE id = :id and active = 1');
-
-        $consulta->execute(['id' => $id]);
-
-        //Al terminar borra el codigo para generar uno nuevo al recargar
-        unset($_SESSION['csrf_token']);
-        //Vuelve al formulario mostrando un mesaje de exito
-        header('Location: /actions/act_buscar_usuarios.php?ok=1');
-        exit;
-
-
+        try{
+            $conn->beginTransaction();
+            //Lee los datos antes de desactivar al usuario
+            $consulta = $conn->prepare('SELECT id, nombre, correo, id_rol, active FROM usuarios WHERE id = :id AND active = 1 FOR UPDATE');
+            $consulta->execute(['id' => $id]);
+            $datosAntes = $consulta->fetch(PDO::FETCH_ASSOC);
+            if($datosAntes === false){
+                $conn->rollBack();
+                header('Location: /actions/act_buscar_usuarios.php?error=1');
+                exit;
+            }
+            $consulta = $conn->prepare('UPDATE usuarios SET active = 0 WHERE id = :id');
+            $consulta->execute(['id' => $id]);
+            $datosNuevos = $datosAntes;
+            $datosNuevos['active'] = 0;
+            registrarBitacora($conn, 'eliminar', $id, $datosAntes, $datosNuevos);
+            $conn->commit();
+            unset($_SESSION['csrf_token']);
+            header('Location: /actions/act_buscar_usuarios.php?ok=1');
+            exit;
+        } catch(PDOException $error){
+            if($conn->inTransaction()){
+                $conn->rollBack();
+            }
+            error_log('Error al desactivar usuario: ' . $error->getMessage());
+            header('Location: /actions/act_buscar_usuarios.php?error=1');
+            exit;
+        }
     } else {
 
         header('Location: /actions/act_buscar_usuarios.php?error=1');
         exit;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-
-
-   
-
-    
-
-
-    

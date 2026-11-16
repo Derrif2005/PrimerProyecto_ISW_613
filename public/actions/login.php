@@ -3,11 +3,29 @@
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
+startSession();
+
+//Solo permite enviar el formulario mediante POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Metodo no permitido');
+}
+
+//Comprueba el codigo de seguridad
+$token = $_POST['csrf_token'] ?? '';
+
+if (!is_string($token) ||
+    empty($_SESSION['csrf_token']) ||
+    !hash_equals($_SESSION['csrf_token'], $token)
+) {
+    header('Location: /?error=invalid_input');
+    exit;
+}
+
 $correo = $_POST['correo'] ?? null;
 $password = $_POST['password'] ?? null;
 
-if (
-    !is_string($correo)
+if (!is_string($correo)
     || !is_string($password)
     || trim($correo) === ''
     || strlen($correo) > 50
@@ -31,20 +49,29 @@ try {
 }
 
 
-//Revisa si el usuario esta activo 
-if ($user !== false && $user['bloqueado'] !== null){
-    // no permite entrar hasta despues de ds minutos
-  if ((int) $user['sigue_bloqueado'] === 1){
-        header('Location: /index.php?error=invalid_credentials');
-        exit;
-    }
+//Comprueba si el usuario tiene un bloqueo registrado
+    if ($user !== false && $user['bloqueado'] !== null) {
 
-    error_log('antes del update');
-    //si pasaron 2 minutos se reinicia
-    $statement = $conn->prepare('UPDATE usuarios SET intentos = 0, bloqueado = NULL WHERE id = :id');
-    $statement->execute(['id' => (int) $user['id']]);
-    error_log('despues del update');
-    $user['intentos'] = 0;
+        //Si el bloqueo sigue vigente, rechaza el ingreso
+        if ((int)$user['sigue_bloqueado'] === 1) {
+            header('Location: /?error=invalid_credentials');
+            exit;
+        }
+
+        try {
+            //Si el bloqueo vencio, reinicia los intentos
+            $statement = $conn->prepare('UPDATE usuarios SET intentos = 0, bloqueado = NULL WHERE id = :id');
+            $statement->execute(['id' => (int)$user['id']]);
+
+            $user['intentos'] = 0;
+            $user['bloqueado'] = null;
+
+        } catch (PDOException $error) {
+            error_log('Error al restablecer intentos: ' . $error->getMessage());
+
+            header('Location: /?error=1');
+            exit;
+        }
     }
 
 // Revisara la contraseña para ver si esta buena
@@ -73,6 +100,22 @@ if(!$contraseñaCorrecta){
     exit;
 }
 
+try {
+    //Un ingreso correcto reinicia los intentos anteriores
+    $statement = $conn->prepare(
+        'UPDATE usuarios
+         SET intentos = 0, bloqueado = NULL
+         WHERE id = :id'
+    );
+
+    $statement->execute(['id' => (int)$user['id']]);
+
+} catch (PDOException $error) {
+    error_log('Error al reiniciar intentos: ' . $error->getMessage());
+
+    header('Location: /?error=1');
+    exit;
+}
 
 // Verifica que la contraseña sea correcta y que este activo
 if ($user === false || !password_verify($password, $user['password_hash'])

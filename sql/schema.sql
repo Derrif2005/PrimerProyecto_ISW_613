@@ -54,7 +54,7 @@ create table equipos(
     codigo varchar(50) not null unique,
     active boolean not null default true,
     imagen_ruta VARCHAR(255) NULL,
-    versionn int not null default 1,
+    versionn VARCHAR(50) NULL DEFAULT NULL,
     eliminado_en DATETIME NULL DEFAULT NULL,
     foreign key (categoria_id) references categorias(id) on delete cascade
 );
@@ -113,5 +113,19 @@ create table auth_tokens(
     validator_hash varchar(64) not null,
     expira_en datetime not null,
 
+    foreign key (usuario_id) references usuarios(id)
+);
+
+
+create table bitacora(
+    id int primary key auto_increment,
+    usuario_id int not null,
+    accion varchar(50) not null,
+    entidad varchar(50) not null,
+    entidad_id int not null,
+    valores_antes json null,
+    valores_despues json null,
+    ip varchar(45) not null,
+    creado_en datetime not null default current_timestamp,
     foreign key (usuario_id) references usuarios(id)
 );

@@ -97,18 +97,9 @@
                 <tr>
 
                     <td><?php echo (int)$categoria['id']; ?></td>
-
-                    <td>
-                        <?php echo htmlspecialchars($categoria['nombre']); ?>
-                    </td>
-
-                    <td>
-                        <?php echo (int)$categoria['dias_max_prestamo']; ?>
-                    </td>
-
-                    <td>
-                        <?php
-                                if ((int)$categoria['active'] === 1) {
+                    <td><?php echo htmlspecialchars($categoria['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
+                    <td><?php echo (int)$categoria['dias_max_prestamo']; ?></td>
+                    <td><?phpif ((int)$categoria['active'] === 1) {
                                     echo 'Activo';
                                 } else {
                                     echo 'Inactivo';

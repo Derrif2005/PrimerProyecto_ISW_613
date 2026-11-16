@@ -2,10 +2,18 @@
 
 require_once __DIR__ . '/../config/constantes.php';
 
-//inicia la sesion si no esta iniciada
+//Inicia la sesion con una cookie protegida
 function startSession()
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
+
+        session_set_cookie_params([
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
+        ]);
+
         session_start();
     }
 }

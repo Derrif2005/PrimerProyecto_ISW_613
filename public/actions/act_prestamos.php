@@ -1,10 +1,9 @@
-
 <?php
 
-session_start();
 
 //Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/bitacora.php';
 require_once __DIR__ . '/../../includes/buscar_prestamos.php';
 require_once __DIR__ . '/../../includes/buscar_detalleprestamos.php';
 
@@ -63,7 +62,7 @@ if($accion === 'crear'){
 
     //Comprueba los datos recibidos del formulario
     if(!is_string($usuario_id) || !ctype_digit($usuario_id) || (int)$usuario_id < 1 ||
-        !is_string($fecha_inicio) || !is_string($fecha_fin) ||
+        !is_string($fecha_inicio) || !is_string($fecha_fin) || str_contains($fecha_inicio, "\0") || str_contains($fecha_fin, "\0") ||
         !is_array($equipo_id) || empty($equipo_id))
     {
         header('Location: /actions/act_buscar_prestamos.php?nuevo=1&error=invalid_input');
@@ -122,6 +121,7 @@ if($accion === 'crear'){
 
          //Comprueba que el usuario exista
         if(!$usuario_existente){
+            $conn->rollBack();
             header('Location: /actions/act_buscar_prestamos.php?nuevo=1&error=invalid_input');
             exit;
         }
@@ -186,6 +186,10 @@ if($accion === 'crear'){
             $consultaDetalle->execute(['prestamo_id' => $prestamo_id, 'equipo_id' => $equipo]);
         }
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'prestamos', $prestamo_id);
+        registrarBitacora($conn, 'crear', $prestamo_id, null, $datosDespues, 'prestamos');
         //Confirma todos los cambios realizados
         $conn->commit();
 
@@ -259,6 +263,7 @@ if($accion === 'crear'){
             exit;
         }
 
+        $datosAntes = obtenerDatosBitacora($conn, 'prestamos', $id);
         $estado_actual = (int)$prestamo['estado'];
 
         //Comprueba que se permita el cambio de estado
@@ -306,6 +311,9 @@ if($accion === 'crear'){
 
             //Si quedan equipos pendientes conserva el estado entregado
             if($pendiente !== false){
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'prestamos', $id);
+        registrarBitacora($conn, 'devolver', $id, $datosAntes, $datosDespues, 'prestamos');
                 $conn->commit();
                 header('Location: /actions/act_buscar_prestamos.php?buscar_id=' . (int)$id . '&success=devolucion_parcial');
                 exit;
@@ -316,6 +324,13 @@ if($accion === 'crear'){
         $consulta = $conn->prepare('UPDATE prestamos SET estado = :estado WHERE id = :id AND active = true');
         $consulta->execute(['estado' => $estado, 'id' => $id]);
 
+        //Distingue una devolucion de otro cambio de estado
+        $accionBitacora = 'cambiar_estado';
+        if($estado === 4){
+            $accionBitacora = 'devolver';
+        }
+        $datosDespues = obtenerDatosBitacora($conn, 'prestamos', $id);
+        registrarBitacora($conn, $accionBitacora, $id, $datosAntes, $datosDespues, 'prestamos');
         //Confirma todos los cambios
         $conn->commit();
 
@@ -376,6 +391,7 @@ if($accion === 'crear'){
             exit;
         }
 
+        $datosAntes = obtenerDatosBitacora($conn, 'prestamos', $id);
         //Comprueba que no haya utilizado la prorroga
         if((int)$prestamo['prorrogas'] !== 0){
             $conn->rollBack();
@@ -442,6 +458,10 @@ if($accion === 'crear'){
         $consulta = $conn->prepare('UPDATE prestamos SET fecha_fin = :fecha_fin, prorrogas = 1 WHERE id = :id AND estado = 3 AND prorrogas = 0 AND active = true');
         $consulta->execute(['fecha_fin' => $nueva_fecha_fin, 'id' => $id]);
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'prestamos', $id);
+        registrarBitacora($conn, 'prorrogar', $id, $datosAntes, $datosDespues, 'prestamos');
         //Confirma los cambios
         $conn->commit();
 

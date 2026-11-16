@@ -1,9 +1,8 @@
 <?php
 
-session_start();
-
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
+require_once __DIR__ . '/../../includes/bitacora.php';
 require_once __DIR__ . '/../../includes/buscar_usuarios.php';
 
 //Comprobara si tiene una sesion iniciada
@@ -15,7 +14,11 @@ require_once __DIR__ . '/../../includes/mensajes.php';
 
 
 requireLogin();
-
+//Solo permite solicitudes mediante POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Metodo no permitido');
+}
 
 //Comprueba que el codigo es del CSRF
 $token = $_POST['csrf_token'] ?? '';
@@ -69,12 +72,15 @@ $accion = $_POST['accion'] ?? '';
         }
 
       try{
+        $conn->beginTransaction();
+    $datosAntes = obtenerDatosBitacora($conn, 'categorias', $id);
     //Busca por id de categoria y comprueba que existe  
     $consulta = $conn->prepare('SELECT id FROM categorias WHERE id=:id LIMIT 1');
     $consulta->execute(['id' => $id]);    
     $id_existente = $consulta->fetch(PDO::FETCH_ASSOC);
     //Valida que $rol_existente es true porque si da false no existe
     if($id_existente === false){
+        $conn->rollBack();
         header('Location: /actions/act_buscar_categoria.php?error=1');
         exit;
     }
@@ -83,9 +89,17 @@ $accion = $_POST['accion'] ?? '';
     //Actualiza el codigo 
     $consulta = $conn->prepare('UPDATE categorias SET nombre = :nombre, dias_max_prestamo = :dias_max_prestamo,  active = :active WHERE id = :id');
     $consulta->execute(['nombre' => trim($nombre), 'dias_max_prestamo' => $dias_max_prestamo, 'active' => $active, 'id' =>$id ]); 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'categorias', $id);
+        registrarBitacora($conn, 'actualizar', $id, $datosAntes, $datosDespues, 'categorias');
+        $conn->commit();
     header('Location: /actions/act_buscar_categoria.php?success=1');
     exit;
     } catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
 
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
@@ -113,6 +127,7 @@ $accion = $_POST['accion'] ?? '';
         }
 
       try{
+        $conn->beginTransaction();
     //Guarda la categoria 
     $consulta = $conn->prepare('INSERT INTO categorias (nombre, dias_max_prestamo) VALUES(:nombre, :dias_max_prestamo)'
     );
@@ -121,6 +136,12 @@ $accion = $_POST['accion'] ?? '';
     'dias_max_prestamo' => $dias_max_prestamo
     ]);
 
+    $categoria_id = $conn->lastInsertId();
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'categorias', $categoria_id);
+        registrarBitacora($conn, 'crear', $categoria_id, null, $datosDespues, 'categorias');
+        $conn->commit();
     //Al terminar borra el codigo para generar uno nuevo al recargar
     unset($_SESSION['csrf_token']);
 
@@ -128,11 +149,17 @@ $accion = $_POST['accion'] ?? '';
     header('Location: /actions/act_buscar_categoria.php?ok=1');
     exit;
     } catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
     //comprueba si existe un problema de integridad
     if ($error->getCode() === '23000') {
     header('Location: /actions/act_buscar_categoria.php?error=categoria_duplicada');
     exit;
     }
+    error_log('Error al crear categoria: ' . $error->getMessage());
+    header('Location: /actions/act_buscar_categoria.php?error=1');
+    exit;
     }
 
 
@@ -145,25 +172,37 @@ $accion = $_POST['accion'] ?? '';
             exit;
         }
 
+    try{
+        $conn->beginTransaction();
+        $datosAntes = obtenerDatosBitacora($conn, 'categorias', $id);
+        if((int)$datosAntes['active'] !== 1){
+            throw new PDOException('La categoria ya esta inactiva');
+        }
     $consulta = $conn->prepare('UPDATE categorias SET active = 0 WHERE id = :id and active = 1');
     $consulta->execute(['id' => $id]);
 
+
+        //Guarda los datos posteriores y registra la actividad
+        $datosDespues = obtenerDatosBitacora($conn, 'categorias', $id);
+        registrarBitacora($conn, 'eliminar', $id, $datosAntes, $datosDespues, 'categorias');
+        $conn->commit();
     //Al terminar borra el codigo para generar uno nuevo al recargar
     unset($_SESSION['csrf_token']);
 //Vuelve al formulario mostrando un mesaje de exito
     header('Location: /actions/act_buscar_categoria.php?ok=1');
     exit;
 
+    } catch(PDOException $error){
+        if($conn->inTransaction()){
+            $conn->rollBack();
+        }
+        error_log('Error al eliminar categoria: ' . $error->getMessage());
+        header('Location: /actions/act_buscar_categoria.php?error=1');
+        exit;
+    }
     }
     
     else{
         header('Location: /actions/act_buscar_categoria.php?error=1');
         exit;
     }
-  
-
-
-
-
-    
-   

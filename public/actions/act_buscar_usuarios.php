@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';

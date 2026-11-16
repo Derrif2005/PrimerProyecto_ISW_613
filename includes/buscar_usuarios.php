@@ -59,3 +59,21 @@ function findcorreo(PDO $conn, $correo)
     $statement->execute(['correo' => $correo]);
     return $statement->fetch(PDO::FETCH_ASSOC);
 }
+
+//obtiene el rol actual del usuario
+function obtenerRolActual(PDO $conn, int $id){
+
+    $consulta = $conn->prepare('SELECT id_rol FROM usuarios
+    WHERE id = :id AND active = true LIMIT 1');
+
+    $consulta->execute(['id' => $id]);
+
+    //obtiene el rol del usuario
+    $rol = $consulta->fetchColumn();
+
+    if($rol === false){
+        return false;
+    }
+
+    return (int)$rol;
+}
