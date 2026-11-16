@@ -80,10 +80,12 @@ create table prestamos(
     active boolean not null default true,
 
     foreign key (usuario_id) references usuarios(id),
-    foreign key (operador_id) references usuarios(id));
+    foreign key (operador_id) references usuarios(id)
+);
 
     ALTER TABLE prestamos
     ADD COLUMN prorrogas int not null default 0;
+
 
     create table configuracion(
     clave varchar(50) primary key,
