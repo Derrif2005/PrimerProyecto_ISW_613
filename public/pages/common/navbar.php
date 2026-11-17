@@ -23,7 +23,7 @@ if(empty($_SESSION['csrf_token'])){
         <form action="/actions/logout.php" method="POST">
 
             <input type="hidden" name="csrf_token"
-                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
             <button class="boton boton-eliminar" type="submit">
                 Cerrar Sesión

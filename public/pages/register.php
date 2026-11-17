@@ -7,8 +7,8 @@ require_once __DIR__ . '/../../includes/mensajes.php';
 startSession();
 
 //Es un codigo de seguridad para el formulario
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+if (empty($_SESSION['csrf_token'])) {//Valida que exista el token 
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));// Si no existe crea uno
 }
 ?>
 
@@ -47,7 +47,7 @@ if (empty($_SESSION['csrf_token'])) {
 
                 <!-- Token de seguridad CSRF -->
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Crear Cuenta

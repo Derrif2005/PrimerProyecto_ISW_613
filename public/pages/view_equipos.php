@@ -153,9 +153,9 @@
 
                     </td>
 
-                    <td><?php echo htmlspecialchars($equipo['versionn']); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['versionn'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
 
-                    <td><?php echo htmlspecialchars($equipo['eliminado_en'] ?? 'No eliminado'); ?></td>
+                    <td><?php echo htmlspecialchars($equipo['eliminado_en'] ?? 'No eliminado', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></td>
 
                     <td><?php if($esAdmin): ?>
 
@@ -175,8 +175,7 @@
                             <input type="hidden" name="id" value="<?php echo (int)$equipo['id']; ?>">
 
                             <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'],  ENT_QUOTES | ENT_SUBSTITUTE  , 'UTF-8'); ?>">
                             <button type="submit" class="boton boton-eliminar">
                                 Eliminar
                             </button>
@@ -292,13 +291,13 @@
                 <input type="hidden" name="accion" value="actualizar">
 
                 <input type="hidden" id="id" name="id"
-                    value="<?php echo htmlspecialchars($encontrarEquipo['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($encontrarEquipo['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <div class="grupo-formulario">
                     <label for="nombre">Nombre</label>
 
                     <input type="text" id="nombre" name="nombre"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                        value="<?php echo htmlspecialchars($encontrarEquipo['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
                         maxlength="50" required>
                 </div>
 
@@ -312,7 +311,7 @@
                         <option value="<?php echo (int)$categoria['id']; ?>"
                             <?php if((int)$categoria['id'] === (int)$encontrarEquipo['categoria_id']) echo 'selected'; ?>>
 
-                            <?php echo htmlspecialchars($categoria['nombre']); ?>
+                            <?php echo htmlspecialchars($categoria['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
 
                         </option>
 
@@ -325,7 +324,7 @@
                     <label for="codigo">Código</label>
 
                     <input type="text" id="codigo" name="codigo"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES, 'UTF-8'); ?>"
+                        value="<?php echo htmlspecialchars($encontrarEquipo['codigo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
                         maxlength="50" required>
                 </div>
 
@@ -362,11 +361,11 @@
                     <label for="eliminado_en">Eliminado en</label>
 
                     <input type="text" id="eliminado_en" name="eliminado_en"
-                        value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        value="<?php echo htmlspecialchars($encontrarEquipo['eliminado_en'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
                 </div>
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Actualizar equipo
@@ -401,7 +400,7 @@
                         <?php foreach($Categorias as $categoria): ?>
 
                         <option value="<?php echo (int)$categoria['id']; ?>">
-                            <?php echo htmlspecialchars($categoria['nombre']); ?>
+                            <?php echo htmlspecialchars($categoria['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
                         </option>
 
                         <?php endforeach; ?>
@@ -432,7 +431,7 @@
                     <input type="text" id="eliminado_en" readonly value="<?= htmlspecialchars($encontrarEquipo['eliminado_en'] ?? 'No eliminado',ENT_QUOTES | ENT_SUBSTITUTE,'UTF-8') ?>"></div>
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Crear equipo

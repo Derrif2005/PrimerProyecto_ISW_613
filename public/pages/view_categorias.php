@@ -11,6 +11,11 @@
 
     // Comprobar que sea administrador
     validarAdmin($conn);
+
+    if(!isset($Categorias)){
+        header('Location: /actions/act_buscar_categoria.php');
+        exit;
+    }
 ?>
 
 <?php require_once 'common/header.php'; ?>
@@ -34,7 +39,7 @@
             <div class="grupo-formulario">
                 <label for="filtro">Buscar equipos por nombre</label>
                 <input type="text" id="filtro" name="filtro"
-                    value="<?= htmlspecialchars($filtro, ENT_QUOTES, 'UTF-8') ?>">
+                    value="<?= htmlspecialchars($filtro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
             </div>
             <button type="submit" class="boton">Buscar en la tabla</button>
             <a href="/actions/act_buscar_categoria.php" class="boton">Mostrar todos</a>
@@ -124,7 +129,7 @@
                             <input type="hidden" name="id" value="<?php echo (int)$categoria['id']; ?>">
 
                             <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                             <button type="submit" class="boton boton-eliminar">
                                 Eliminar
@@ -206,13 +211,13 @@
                 <input type="hidden" name="accion" value="actualizar">
 
                 <input type="hidden" id="id" name="id"
-                    value="<?php echo htmlspecialchars($encontrarCategoria['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($encontrarCategoria['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <div class="grupo-formulario">
                     <label for="nombre">Nombre</label>
 
                     <input type="text" id="nombre" name="nombre"
-                        value="<?php echo htmlspecialchars($encontrarCategoria['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                        value="<?php echo htmlspecialchars($encontrarCategoria['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
                         maxlength="50" required>
                 </div>
 
@@ -220,7 +225,7 @@
                     <label for="dias_max_prestamo">Días máximos de préstamo</label>
 
                     <input type="number" id="dias_max_prestamo" name="dias_max_prestamo" min="1" step="1"
-                        value="<?php echo htmlspecialchars($encontrarCategoria['dias_max_prestamo'], ENT_QUOTES, 'UTF-8'); ?>">
+                        value="<?php echo htmlspecialchars($encontrarCategoria['dias_max_prestamo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
                 </div>
 
                 <div class="grupo-formulario">
@@ -240,7 +245,7 @@
                 </div>
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Actualizar categoría
@@ -274,7 +279,7 @@
                 </div>
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Crear categoría

@@ -1,6 +1,5 @@
 <?php
 
-
 // Carga la conexion MYSQL
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/auth.php';
@@ -14,12 +13,13 @@ if($_SERVER['REQUEST_METHOD'] !== 'POST'){
 }
 
 //Comprueba que el codigo es del CSRF
-$token = $_POST['csrf_token'] ?? '';
+$token = $_POST['csrf_token'] ?? '';//Recibe el token por metodo POST
 if(
-    !is_string($token) || 
-    empty($_SESSION['csrf_token']) ||
-    !hash_equals($_SESSION['csrf_token'], $token) 
+    !is_string($token) || //Valida que sea tipo texto
+    empty($_SESSION['csrf_token']) ||//Valida que no venga vacio
+    !hash_equals($_SESSION['csrf_token'], $token) // Recibe el token de la $_SESSION y lo compara con el $token, si son iguales TRUE si son diferentes, FALSE
     ){
+        //Si no se cumplen las condiciones da el error
         header('Location: /pages/register.php?error=1');
         exit;
     }
@@ -73,14 +73,20 @@ try{
     header('Location: /pages/register.php?ok=1');
     exit;
 
-  header('Location: /index.php?success=logged_out');
   
 } catch(PDOException $error){
     //comprueba si existe un problema de integridad
 if ($error->getCode() === '23000') {
     header('Location: /pages/register.php?error=correo_duplicado');
     exit;
-}
+    }
+     //registra el error en el archivo de logs
+    error_log('Error al registrar usuario: ' . $error->getMessage());
+
+    //redirecciona al usuario sin mostrar detalles del error
+    header('Location: /pages/register.php?error=1');
+    exit;
+
 }
 
 

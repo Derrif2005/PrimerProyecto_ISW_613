@@ -220,14 +220,10 @@ function eliminarToken(PDO $conn){
         $validator_hash = hash('sha256', $datos[1]);
 
         //Elimina el token de la base de datos
-        $consulta = $conn->prepare('DELETE FROM auth_tokens
-        WHERE selector = :selector
+        $consulta = $conn->prepare('DELETE FROM auth_tokens WHERE selector = :selector
         AND validator_hash = :validator_hash');
 
-        $consulta->execute([
-            'selector' => $selector,
-            'validator_hash' => $validator_hash
-        ]);
+        $consulta->execute(['selector' => $selector,'validator_hash' => $validator_hash]);
     }
 }
 

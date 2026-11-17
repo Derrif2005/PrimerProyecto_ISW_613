@@ -33,7 +33,7 @@
 
     //Obtiene todos los usuarios activos para realizar un prestamo
     function getUsuariosParaPrestamo(PDO $conn){
-    $consulta = $conn->query('SELECT id, nombre FROM usuarios WHERE active = true ORDER BY nombre');
+    $consulta = $conn->query('SELECT id, nombre FROM usuarios WHERE active = true AND id_rol = 3 ORDER BY nombre');
     //Devuelve los usuarios encontrados
     return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }

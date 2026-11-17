@@ -1,14 +1,15 @@
 create database prestamoutn;
+use prestamoutn;
 
 create table permisos(
     id int primary key auto_increment,
     clave varchar(50) not null unique
-);
+)ENGINE=InnoDB ;
 
 create table roles(
     id int primary key auto_increment,
     nombre varchar(50) not null unique
-);
+)ENGINE=InnoDB ;
 
 
 create table rol_permiso(
@@ -17,7 +18,7 @@ create table rol_permiso(
     primary key(rol_id, permiso_id),
     foreign key (rol_id) references roles(id) on delete cascade,
     foreign key (permiso_id) references permisos(id) on delete cascade
-);
+)ENGINE=InnoDB ;
 
 
 
@@ -30,7 +31,7 @@ create table usuarios (
     active boolean not null default true,  
     intentos INT DEFAULT 0,
     foreign key (id_rol) references roles(id) -- no le puse on delete cascade porque no quiero que se borre el usuario si se borra el rol
-);
+)ENGINE=InnoDB ;
 
 ALTER TABLE usuarios
 ADD COLUMN bloqueado DATETIME NULL DEFAULT NULL;
@@ -40,7 +41,7 @@ create table categorias(
     id int primary key auto_increment,
     nombre varchar(50) not null unique,
     dias_max_prestamo int not null
-);
+)ENGINE=InnoDB ;
 
 
 ALTER TABLE categorias
@@ -57,7 +58,7 @@ create table equipos(
     versionn VARCHAR(50) NULL DEFAULT NULL,
     eliminado_en DATETIME NULL DEFAULT NULL,
     foreign key (categoria_id) references categorias(id) on delete cascade
-);
+) ENGINE=InnoDB ;
 
 
 
@@ -66,7 +67,7 @@ create table equipo_imagenes(
     id int primary key auto_increment,
     equipo_id int not null,
     imagen_ruta VARCHAR(255) not null,
-    foreign key (equipo_id) references equipos(id) on delete cascade);
+    foreign key (equipo_id) references equipos(id) on delete cascade) ENGINE=InnoDB ;
 
 
 
@@ -81,7 +82,7 @@ create table prestamos(
 
     foreign key (usuario_id) references usuarios(id),
     foreign key (operador_id) references usuarios(id)
-);
+)ENGINE=InnoDB ;
 
     ALTER TABLE prestamos
     ADD COLUMN prorrogas int not null default 0;
@@ -90,7 +91,7 @@ create table prestamos(
     create table configuracion(
     clave varchar(50) primary key,
     valor int not null
-);
+)ENGINE=InnoDB ;
 
 
 create table prestamo_detalle(
@@ -103,7 +104,7 @@ create table prestamo_detalle(
     foreign key (prestamo_id) references prestamos(id),
     foreign key (equipo_id) references equipos(id) 
 
-);
+)ENGINE=InnoDB ;
 
 
 create table auth_tokens(
@@ -114,7 +115,7 @@ create table auth_tokens(
     expira_en datetime not null,
 
     foreign key (usuario_id) references usuarios(id)
-);
+)ENGINE=InnoDB ;
 
 
 create table bitacora(
@@ -128,4 +129,4 @@ create table bitacora(
     ip varchar(45) not null,
     creado_en datetime not null default current_timestamp,
     foreign key (usuario_id) references usuarios(id)
-);
+)ENGINE=InnoDB ;

@@ -10,6 +10,6 @@ const REMEMBER_TOKEN_COOKIE = 'login_remember';
 //cantidades permitidas para mostrar registros por pagina
 const cantidadespermitidas = [5, 10, 20];
 
-
+// nombre de la cookie de los equipos recientes
 const EQUIPOS_RECIENTES_COOKIE = 'equipos_recientes';
 

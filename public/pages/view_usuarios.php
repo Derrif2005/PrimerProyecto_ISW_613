@@ -13,6 +13,11 @@
     validarAdmin($conn);
 
     validarPermiso($conn, 'usuarios_ver');
+
+    if(!isset($users)){
+        header('Location: /actions/act_buscar_usuarios.php');
+        exit;
+    }
 ?>
 
 <?php require_once 'common/header.php'; ?>
@@ -135,7 +140,7 @@
                             <input type="hidden" name="id" value="<?php echo (int)$user['id']; ?>">
 
                             <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                             <button type="submit" class="boton boton-eliminar">
                                 Eliminar
@@ -219,7 +224,7 @@
                     <label for="correo">Correo</label>
 
                     <input type="email" id="correo" name="correo"
-                        value="<?php echo htmlspecialchars($encontrarUsuario['correo'], ENT_QUOTES, 'UTF-8'); ?>"
+                        value="<?php echo htmlspecialchars($encontrarUsuario['correo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
                         required>
                 </div>
 
@@ -227,7 +232,7 @@
                     <label for="nombre">Nombre</label>
 
                     <input type="text" id="nombre" name="nombre"
-                        value="<?php echo htmlspecialchars($encontrarUsuario['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                        value="<?php echo htmlspecialchars($encontrarUsuario['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
                         maxlength="50" required>
                 </div>
 
@@ -268,10 +273,10 @@
                 </div>
 
                 <input type="hidden" id="id" name="id"
-                    value="<?php echo htmlspecialchars($encontrarUsuario['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($encontrarUsuario['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Actualizar cuenta
@@ -329,7 +334,7 @@
                 </div>
 
                 <input type="hidden" name="csrf_token"
-                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
                 <button type="submit" class="boton boton-completo">
                     Crear usuario

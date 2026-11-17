@@ -1,13 +1,12 @@
 <?php
 
 
-//Carga la conexion MYSQL
+//Carga los archivos necesarios
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/bitacora.php';
 require_once __DIR__ . '/../../includes/buscar_prestamos.php';
 require_once __DIR__ . '/../../includes/buscar_detalleprestamos.php';
 
-//Comprueba si tiene una sesion iniciada
 require_once __DIR__ . '/../../includes/auth.php';
 
 //Mensajes de error
@@ -20,7 +19,8 @@ validarPermiso($conn, 'prestamos_crear');
 
 
 //Comprueba que la solicitud sea mediante POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {//si el método que utilizó el navegador para realizar la petición es diferente de POST, entonces entra al if
+    //Devuleve el metodo codigo 405 significa método no permitido
     header('Location: /actions/act_buscar_prestamos.php?error=1');
     exit;
 }
@@ -29,7 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //Comprueba que el codigo es del CSRF
 $token = $_POST['csrf_token'] ?? '';
 
-if(!is_string($token) ||empty($_SESSION['csrf_token']) ||!hash_equals($_SESSION['csrf_token'], $token)){
+if(!is_string($token) || //Valida que sea tipo texto
+    empty($_SESSION['csrf_token']) || //Valida que no venga vacio
+    !hash_equals($_SESSION['csrf_token'], $token)){ // Recibe el token de la $_SESSION y lo compara con el $token, si son iguales TRUE si son diferentes, FALSE
+   //muestra error
     header('Location: /actions/act_buscar_prestamos.php?error=1');
     exit;
 }
@@ -62,7 +65,7 @@ if($accion === 'crear'){
 
     //Comprueba los datos recibidos del formulario
     if(!is_string($usuario_id) || !ctype_digit($usuario_id) || (int)$usuario_id < 1 ||
-        !is_string($fecha_inicio) || !is_string($fecha_fin) || str_contains($fecha_inicio, "\0") || str_contains($fecha_fin, "\0") ||
+        !is_string($fecha_inicio) || !is_string($fecha_fin) || str_contains($fecha_inicio, "\0") || str_contains($fecha_fin, "\0") || //verifica que no tengan caracteres nulos
         !is_array($equipo_id) || empty($equipo_id))
     {
         header('Location: /actions/act_buscar_prestamos.php?nuevo=1&error=invalid_input');
@@ -115,7 +118,7 @@ if($accion === 'crear'){
         //Inicia la transaccion
         $conn->beginTransaction();
         //Comprueba que el usuario exista y este activo
-        $consulta = $conn->prepare('SELECT id FROM usuarios WHERE id = :id AND active = true LIMIT 1');
+        $consulta = $conn->prepare('SELECT id FROM usuarios WHERE id = :id AND active = true AND id_rol = 3  LIMIT 1');
         $consulta->execute(['id' => $usuario_id]);
         $usuario_existente = $consulta->fetch(PDO::FETCH_ASSOC);
 

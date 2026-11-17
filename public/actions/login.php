@@ -1,52 +1,55 @@
 <?php
-
+//Carga los archivos requeridos
 require_once __DIR__ . '/../../config/conexion.php';
 require_once __DIR__ . '/../../includes/auth.php';
 
 startSession();
 
 //Solo permite enviar el formulario mediante POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {//si el método que utilizó el navegador para realizar la petición es diferente de POST, entonces entra al if
+    //Devuleve el metodo codigo 405 significa método no permitido
     http_response_code(405);
     exit('Metodo no permitido');
 }
 
 //Comprueba el codigo de seguridad
 $token = $_POST['csrf_token'] ?? '';
-
+//Valida que sea tipo texto
 if (!is_string($token) ||
-    empty($_SESSION['csrf_token']) ||
-    !hash_equals($_SESSION['csrf_token'], $token)
+    empty($_SESSION['csrf_token']) ||//Valida que no venga vacio
+    !hash_equals($_SESSION['csrf_token'], $token)// Recibe el token de la $_SESSION y lo compara con el $token, si son iguales TRUE si son diferentes, FALSE
 ) {
     header('Location: /?error=invalid_input');
     exit;
 }
 
-$correo = $_POST['correo'] ?? null;
-$password = $_POST['password'] ?? null;
+$correo = $_POST['correo'] ?? null;//Variable que recibe datos
+$password = $_POST['password'] ?? null;//Variable que recibe datos
 
-if (!is_string($correo)
-    || !is_string($password)
-    || trim($correo) === ''
-    || strlen($correo) > 50
-    || $password === ''
+if (!is_string($correo)//Verifica que sea tipo texto
+    || !is_string($password)//Verifica que sea tipo texto
+    || trim($correo) === ''//Quita los espacions
+    || strlen($correo) > 50//Cuenta la cantidad de carateres
+    || $password === '' //Tambien cuenta los espacios en blanco
 ) {
-    //redirect to login page with error message
+    //si no lo cumple muestra el error
     header('Location: /index.php?error=invalid_input');
     exit;
 }
 
 
-$user = false;
+$user = false;//Indica que aun no se ha encontrado al usuario
 try {
-    // connect to the database and fetch the user record along with its province
+   //prepara la consulta SQL para buscar al usuario por su correo, obtener todos sus datos y comprobar si sigue bloqueado
     $statement = $conn->prepare('SELECT *, (bloqueado > NOW()) AS sigue_bloqueado FROM usuarios WHERE correo = :correo LIMIT 1');
-
+    //lo asigna al parametro :correo y ejecuta la consulta SQL
     $statement->execute(['correo' => trim($correo)]);
+    //pasa los datos del usuario como un arreglo y los guarda en $user y si no encuentra al usuario devuelve false
     $user = $statement->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $exception) {
+    //Por si pasa un error lo guarda
+    } catch (PDOException $exception) {
     error_log('Authentication database error: ' . $exception->getMessage());
-}
+    }
 
 
 //Comprueba si el usuario tiene un bloqueo registrado
